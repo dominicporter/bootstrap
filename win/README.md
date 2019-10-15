@@ -1,21 +1,29 @@
 # win
 
-1. run bootstrap.ps1 in Powershell.
+Run bootstrap.ps1 in Powershell.
 
-2. Set Env for golang
+Then setup your env:
+
+Golang
 User Level:
 GOROOT = C:\Users\HOME\scoop\apps\go\current
 
 System Level:
 PATH to have: C:\Users\Saadi\scoop\apps\go\current\bin
 
-3. Check golang works
-- Run the example.
+
+
+THen try to run the examples....
 
 
 
 
-# OTHER....
+# TODO
+
+
+Flutter, IOS and android setup to be like the MAC7 Linux ones.....
+
+
 go-releaser can release to scoop:
 - https://godoc.org/github.com/goreleaser/goreleaser/internal/pipe/scoop
 - so we can release to a private scoop and then update apps this way.
