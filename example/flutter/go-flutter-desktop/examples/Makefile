@@ -125,6 +125,13 @@ flu-desk-pack-clean:
 	docker system prune
 	#docker system prune --force
 
+flu-desk-pack-clean-tmp:
+	# clean out docker tmp file dir
+	ls /var/folders/wp/
+	cd /var/folders/wp/ && rm -rf *
+	ls /var/folders/wp/
+
+
 flu-desk-pack-init:
 
 	# Creates any files needed to do packaging.
@@ -144,9 +151,11 @@ flu-desk-pack-init:
 	cd $(SAMPLE_FSPATH) && hover init-packaging linux-deb
 	cd $(SAMPLE_FSPATH) && hover init-packaging linux-snap
 
+
 flu-desk-pack:
 
 	# hover build --help
+
 
 	# darwin (works)
 	# For docker builds on MAC you need to add "/var/folders/wp/" to your docker file sharing.
@@ -164,13 +173,19 @@ flu-desk-pack:
 	# It seems that linux-appimage (https://appimage.org/) works on ubuntu so screw SnapCraft..
 	# to install on ubuntu using a appimage is easy: https://askubuntu.com/questions/774490/what-is-an-appimage-how-do-i-install-it
 	# We need to try and make sure it works with flutter ! Who has an ubuntu laptop ?
-	#cd $(SAMPLE_FSPATH) && hover build linux-snap
+
+	# Update: works for basic go-flutter example
+	cd $(SAMPLE_FSPATH) && hover build linux-snap
 
 	# broken: Issue: https://github.com/go-flutter-desktop/go-flutter/issues/289
 	# Marked "as wont fix". So have to ask AppImage team.
+
+	# Update: works for basic go-flutter example
 	cd $(SAMPLE_FSPATH) && hover build linux-appimage
 	
-
+flu-desk-pack-open:
+	# to see the outputs in your file system.
+	open $(SAMPLE_FSPATH)/go/build/outputs
 
 
 
