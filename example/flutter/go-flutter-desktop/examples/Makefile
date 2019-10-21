@@ -125,11 +125,7 @@ flu-desk-pack-clean:
 	docker system prune
 	#docker system prune --force
 
-flu-desk-pack-clean-tmp:
-	# clean out docker tmp file dir
-	ls /var/folders/wp/
-	cd /var/folders/wp/ && rm -rf *
-	ls /var/folders/wp/
+
 
 
 flu-desk-pack-init:
@@ -159,14 +155,14 @@ flu-desk-pack:
 
 	# darwin (works)
 	# For docker builds on MAC you need to add "/var/folders/wp/" to your docker file sharing.
-	cd $(SAMPLE_FSPATH) && hover build darwin-pkg
+	#cd $(SAMPLE_FSPATH) && hover build darwin-pkg
 	
 	# windows (works)
-	cd $(SAMPLE_FSPATH) && hover build windows-msi
+	#cd $(SAMPLE_FSPATH) && hover build windows-msi
 
 	# linux 
 	# works
-	cd $(SAMPLE_FSPATH) && hover build linux-deb
+	#cd $(SAMPLE_FSPATH) && hover build linux-deb
 
 	# broken: Issue: https://github.com/go-flutter-desktop/go-flutter/issues/287#issuecomment-544161253
 	# marked as "will not fix" because its shitty Ubuntu SnapCraft error.
@@ -181,11 +177,32 @@ flu-desk-pack:
 	# Marked "as wont fix". So have to ask AppImage team.
 
 	# Update: works for basic go-flutter example
-	cd $(SAMPLE_FSPATH) && hover build linux-appimage
+	#cd $(SAMPLE_FSPATH) && hover build linux-appimage
 	
 flu-desk-pack-open:
 	# to see the outputs in your file system.
 	open $(SAMPLE_FSPATH)/go/build/outputs
+
+
+# Will vary per run and machine.
+DOCKERTEMP_FSPATH=/var/folders/wp/ff6sz9qs6g71jnm12nj2kbyw0000gp
+
+flu-desk-pack-tmp-list:
+	ls /var/folders/wp/
+	stat $(DOCKERTEMP_FSPATH)
+
+flu-desk-pack-tmp-clean:
+	# clean out docker tmp file dir
+	rm -rf $(DOCKERTEMP_FSPATH)
+
+	#ls /var/folders/wp/
+	#cd /var/folders/wp/ && rm -rf *
+	#ls /var/folders/wp/
+
+flu-desk-pack-tmp-zip:
+	# to share whats in tmp
+	cd $(DOCKERTEMP_FSPATH) && zip -r -X $(SAMPLE_FSPATH)/go/build/outputs/dockertemp.zip *
+
 
 
 
