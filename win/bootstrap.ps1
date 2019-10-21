@@ -32,6 +32,7 @@ scoop install vscode
 
 # go
 # https://github.com/golang/go/wiki/windows-scoop-install-go-cli
+# See screen shot for setting up you Environment variables.
 scoop install go 
 
 # protoc
