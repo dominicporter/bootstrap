@@ -1,3 +1,5 @@
+# see: https://github.com/news-maily/app/blob/master/Makefile
+
 .PHONY: build
 
 ifneq ($(shell uname), Darwin)
@@ -17,11 +19,14 @@ gen_migrations:
 test: 
 	#go test -cover $(PACKAGES)
 
-build: build_api
+build: build_go
 
-build_api:
+build_go:
 	mkdir -p bin
-	go build -o bin/hello ./example/go/hello
+	cd $(PWD)/example/go/hello && $(MAKE) build
+	#go build -o ./bin/hello ./example/go/hello
+	#go build -o bin/screenshot ./example/go/screenshot
+	#go build -o bin/glfw ./example/go/glfw
 	#go build -o bin/app .
 	#go build -o bin/bulksender ./consumers/bulksender
 	#go build -o bin/campaigner ./consumers/campaigner

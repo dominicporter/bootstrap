@@ -45,7 +45,7 @@ jobs:
       env:
         GO111MODULE: "on"
       with:
-        args: make gen && go test ./...
+        args: make gen && make test
   buildable:
     name: Buildable
     runs-on: ubuntu-latest
@@ -56,4 +56,4 @@ jobs:
       env:
         GO111MODULE: "on"
       with:
-        args: make gen && go build .
+        args: make gen && make build
