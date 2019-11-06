@@ -24,6 +24,7 @@ build: build_go
 build_go:
 	mkdir -p bin
 	cd $(PWD)/example/go/hello && $(MAKE) build
+	cd $(PWD)/example/go/embedcloud && $(MAKE) build
 	#go build -o ./bin/hello ./example/go/hello
 	#go build -o bin/screenshot ./example/go/screenshot
 	#go build -o bin/glfw ./example/go/glfw
