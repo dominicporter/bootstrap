@@ -13,6 +13,10 @@ LIB_FSPATH=$(GOPATH)/src/$(LIB)
 GO111MODULE=on
 
 
+#SAMPLE_NAME=stocks
+SAMPLE_NAME=draggable_borderless
+
+SAMPLE_FSPATH=$(LIB_FSPATH)/$(SAMPLE_NAME)
 
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
@@ -40,6 +44,7 @@ code:
 
 os-dep:
 	# Assume hover make file has ben run 
+	
 
 
 ### Flu
@@ -55,8 +60,6 @@ flu-config-desk: ## flu-config-desk
 
 
 
-SAMPLE_NAME=draggable_borderless
-SAMPLE_FSPATH=$(LIB_FSPATH)/$(SAMPLE_NAME)
 
 flu-print: ## flu-print
 	@echo
@@ -72,13 +75,16 @@ flu-update:
 
 ### DESK
 
+flu-desk-local-print:
+	cd $(SAMPLE_FSPATH) && hover doctor
+
 flu-desk-local-run: ## flu-desk-local-run
 	# does not use docker
 	cd $(SAMPLE_FSPATH) && hover run
 
 flu-desk-local-build: ## flu-desk-local-build
 	# does not use docker
-	cd $(SAMPLE_FSPATH) && hover build
+	cd $(SAMPLE_FSPATH) && hover build darwin
 
 
 flu-desk-build-all: ## flu-desk-build-all
@@ -103,13 +109,16 @@ flu-desk-build:
 	cd $(SAMPLE_FSPATH) && hover build darwin
 	cd $(SAMPLE_FSPATH) && hover build windows
 	# broken: need to look into
-	#cd $(SAMPLE_FSPATH) && hover build linux
+	cd $(SAMPLE_FSPATH) && hover build linux
 
 flu-desk-buildrun: flu-desk-build
 
 	# darwin
 	open $(SAMPLE_FSPATH)/go/build/outputs/darwin/
 	open $(SAMPLE_FSPATH)/go/build/outputs/darwin/$(SAMPLE)
+
+
+
 
 ### Desk Packaging
 
@@ -124,9 +133,6 @@ flu-desk-pack-clean:
 	# this wipes ALL of docker data
 	docker system prune
 	#docker system prune --force
-
-
-
 
 flu-desk-pack-init:
 
@@ -155,7 +161,7 @@ flu-desk-pack:
 
 	# darwin (works)
 	# For docker builds on MAC you need to add "/var/folders/wp/" to your docker file sharing.
-	#cd $(SAMPLE_FSPATH) && hover build darwin-pkg
+	cd $(SAMPLE_FSPATH) && hover build darwin-pkg
 	
 	# windows (works)
 	#cd $(SAMPLE_FSPATH) && hover build windows-msi
@@ -171,7 +177,7 @@ flu-desk-pack:
 	# We need to try and make sure it works with flutter ! Who has an ubuntu laptop ?
 
 	# Update: works for basic go-flutter example
-	cd $(SAMPLE_FSPATH) && hover build linux-snap
+	#cd $(SAMPLE_FSPATH) && hover build linux-snap
 
 	# broken: Issue: https://github.com/go-flutter-desktop/go-flutter/issues/289
 	# Marked "as wont fix". So have to ask AppImage team.
@@ -184,6 +190,7 @@ flu-desk-pack-open:
 	open $(SAMPLE_FSPATH)/go/build/outputs
 
 
+### Pack debugging
 # Will vary per run and machine.
 DOCKERTEMP_FSPATH=/var/folders/wp/ff6sz9qs6g71jnm12nj2kbyw0000gp
 
@@ -251,6 +258,8 @@ flu-desk-dist-unzip:
 
 
 flu-mob-run: ## flu-mob-run
+	cd $(SAMPLE_FSPATH) && flutter packages get
+	cd $(SAMPLE_FSPATH) && flutter packages pub run build_runner build
 	cd $(SAMPLE_FSPATH) && flutter run -d all
 
 ### i18n
