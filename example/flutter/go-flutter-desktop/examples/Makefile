@@ -13,8 +13,8 @@ LIB_FSPATH=$(GOPATH)/src/$(LIB)
 GO111MODULE=on
 
 
-#SAMPLE_NAME=stocks
-SAMPLE_NAME=draggable_borderless
+SAMPLE_NAME=stocks
+#SAMPLE_NAME=draggable_borderless
 
 SAMPLE_FSPATH=$(LIB_FSPATH)/$(SAMPLE_NAME)
 

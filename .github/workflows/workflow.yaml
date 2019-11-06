@@ -1,11 +1,14 @@
-on: push
-name: My cool Action
+name: Go
+on: [push]
 jobs:
-  checks:
-    name: run
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
+
     - uses: actions/checkout@master
 
-    - name: run
+    - name: tools
       uses: cedrickring/golang-action@1.4.1
+      with:
+        args: make dev.tools
