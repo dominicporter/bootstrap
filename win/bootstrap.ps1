@@ -19,6 +19,9 @@ scoop install git
 # which
 scoop install which
 
+# make
+scoop install make
+
 # openssh
 #scoop install openssh
 # [environment]::setenvironmentvariable(‘GIT_SSH’, (resolve-path (scoop which ssh)), ‘USER’)
