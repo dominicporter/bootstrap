@@ -2,6 +2,7 @@ package main
 
 import (
 	"runtime"
+
 	"github.com/go-gl/glfw/v3.2/glfw"
 )
 
