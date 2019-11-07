@@ -13,7 +13,7 @@ LIB_FSPATH=$(GOPATH)/src/$(LIB)
 GO111MODULE=on
 
 
-SAMPLE_NAME=stocks
+#SAMPLE_NAME=stocks
 #SAMPLE_NAME=draggable_borderless
 
 # video plugin

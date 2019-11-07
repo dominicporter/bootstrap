@@ -1,16 +1,17 @@
 # see exampe: https://github.com/GeertJohan/go.rice/tree/master/example
+all: build
 
-dep:
+dep-os:
 	go get github.com/GeertJohan/go.rice
 	go get github.com/GeertJohan/go.rice/rice
-
 	go get -u github.com/davecgh/go-spew/spew
-gen:
+gen: dep-os
 	# embed statics
 	rice embed-go
-
-build: dep gen
+build: gen
 	go build -o ./bin/hellocloud
+build-clean:
+	rm -rf ./bin
 
 
 

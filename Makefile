@@ -23,11 +23,11 @@ build: build_go
 
 build_go:
 	mkdir -p bin
-	cd $(PWD)/example/go/hello && $(MAKE) build
-	cd $(PWD)/example/go/embedcloud && $(MAKE) build
-	#go build -o ./bin/hello ./example/go/hello
-	#go build -o bin/screenshot ./example/go/screenshot
-	#go build -o bin/glfw ./example/go/glfw
+	cd $(PWD)/example/go/hello && $(MAKE) all
+	cd $(PWD)/example/go/embedcloud && $(MAKE) all
+	cd $(PWD)/example/go/screenshot && $(MAKE) all
+	cd $(PWD)/example/go/glfw && $(MAKE) all
+	
 	#go build -o bin/app .
 	#go build -o bin/bulksender ./consumers/bulksender
 	#go build -o bin/campaigner ./consumers/campaigner
