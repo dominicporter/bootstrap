@@ -39,7 +39,7 @@ scoop install protobuf
 
 # gcc
 # needed for golang CGO etc.
-scoop install gcc
+brew install gcc
 
 # dart
 # I dont think its needed actually... we see.
@@ -47,12 +47,24 @@ scoop install gcc
 
 # flutter
 # NOT needed. hover does it.
-scoop install flutter
+
+# see: https://github.com/flutter/flutter/issues/14050
+
+# using this one: https://github.com/socheatsok78/homebrew-flutter
+# currently NOT working due to Mac Calolina security lockdown.. 
+#brew cask install socheatsok78/flutter/flutter
+
+# https://github.com/leoafarias/fvm
+pub global activate fvm
+
 
 # flutter IOS stuff
 brew install --HEAD libimobiledevice
 brew install ideviceinstaller ios-deploy cocoapods
 pod setup
+
+# sometimes needed
+# brew upgrade cocoapods
 
 # flutter android stuff
 brew cask install adoptopenjdk
