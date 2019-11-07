@@ -45,5 +45,8 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	f.Close()
+	err = f.Close()
+	if err != nil {
+		panic(err)
+	}
 }
