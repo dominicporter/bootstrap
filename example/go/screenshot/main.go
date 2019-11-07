@@ -25,7 +25,10 @@ func main() {
 	}
 	dirPath := filepath.Join(dir, "./bin/out")
 	fmt.Println("dirPath:", dirPath)
-	os.MkdirAll(dirPath, os.ModePerm)
+	err = os.MkdirAll(dirPath, os.ModePerm)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	filePath := filepath.Join(dirPath, "ss.png")
 	fmt.Println("filePath:", filePath)

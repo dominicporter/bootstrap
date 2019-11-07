@@ -55,7 +55,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	tmplMessage.Execute(os.Stdout, map[string]string{"Message": "Hello, world!"})
+	err = tmplMessage.Execute(os.Stdout, map[string]string{"Message": "Hello, world!"})
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	http.Handle("/", http.FileServer(box.HTTPBox()))
 	go func() {
