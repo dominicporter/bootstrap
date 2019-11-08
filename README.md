@@ -7,6 +7,10 @@ First run the bootstrap for your OS.
 Then try the examples. Currently they use make files which work on Mac / linux, but also windows.
 But on Windows the directory commands seem to fail.
 
+It intalls golang and flutter but also some of the other bits we use.
+
+You will need hover in order to run on flutter on desktop. See the Makefile.
+
 # Windows
 
 See the win folder
