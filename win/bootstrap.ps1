@@ -44,6 +44,7 @@ scoop install protobuf
 
 # glfw
 # Do we need it ?
+# If we do: https://github.com/Deide/deide-bucket/blob/master/bucket/glfw.json
 
 # gcc
 # needed for golang CGO etc.
