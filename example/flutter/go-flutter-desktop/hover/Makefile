@@ -17,6 +17,7 @@ LIB_BIN_FSPATH=$(GOPATH)/bin/$(LIB_BIN_NAME)
 
 print:
 	@echo
+	@echo $(OS)
 	@echo LIB_NAME: $(LIB_NAME)
 	@echo LIB: $(LIB)
 	@echo LIB_BRANCH: $(LIB_BRANCH)
@@ -28,7 +29,6 @@ print:
 	@echo
 
 git-clone:
-	# need flutter desktop :)
 	mkdir -p $(LIB_FSPATH)
 	cd $(LIB_FSPATH) && cd .. && rm -rf $(LIB_NAME) && git clone ssh://git@$(LIB).git
 	cd $(LIB_FSPATH) && git checkout $(LIB_BRANCH)
@@ -41,18 +41,25 @@ code:
 	code $(LIB_FSPATH)
 
 os-dep:
+ifeq ($(OS),Windows_NT)
+	scoop install docker
+else 
+	UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	# linux
+	#apt install libglfw
+endif
+ifeq ($(UNAME_S),Darwin)
 	# glfw
 	# mac
 	brew install glfw
-	# linux
-	#apt install libglfw
-	# windows ?
-
 	# docker for cross compile
 	# the client
 	brew install docker
 	# the dmg
 	brew cask install docker
+endif
+endif
 
 go-build-list:
 	@echo
