@@ -2,4 +2,4 @@ bin
 .DS_Store
 
 # important
-#rice-box.go
+rice-box.go
