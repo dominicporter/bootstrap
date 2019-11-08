@@ -4,12 +4,20 @@ This sets up your laptop to develop the Web, Desktop and Mobile and Server code.
 
 First run the bootstrap for your OS.
 
-Then try the examples. Currently they use make files which work on Mac / linux, but also windows.
-But on Windows the directory commands seem to fail.
+- It installs golang and flutter but also some of the other bits we use.
 
-It intalls golang and flutter but also some of the other bits we use.
+Then install hover
 
-You will need hover in order to run on flutter on desktop. See the Makefile.
+- You will need hover in order to run flutter on desktop. See the Makefile.
+
+
+Then try the examples. 
+
+- Currently they use make files which work on Mac / linux, but also windows.
+- See the examples folder
+
+
+
 
 # Windows
 
