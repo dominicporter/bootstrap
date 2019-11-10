@@ -25,7 +25,7 @@ scoop install make
 # [environment]::setenvironmentvariable(‘GIT_SSH’, (resolve-path (scoop which ssh)), ‘USER’)
 
 # vscode
-scoop install vscode
+#scoop install vscode
 # tell vscode where git is:
 # which git
 # then File > Preferences > Settings, and under User Settings add: "git.path”: “c:\\the\\path\\to\\git”
@@ -54,4 +54,5 @@ scoop install gcc
 
 # flutter
 # NOT needed. hover does it.
+scoop bucket add java
 scoop install flutter
