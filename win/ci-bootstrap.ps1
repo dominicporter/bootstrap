@@ -1,5 +1,16 @@
 # RUN THIS in powershell
 
+# Check to see if we are currently running "as Administrator"
+# See: https://github.com/mvijfschaft/dotfiles/blob/master/install.ps1
+if (!(Verify-Elevated)) {
+    $newProcess = new-object System.Diagnostics.ProcessStartInfo "PowerShell";
+    $newProcess.Arguments = $myInvocation.MyCommand.Definition;
+    $newProcess.Verb = "runas";
+    [System.Diagnostics.Process]::Start($newProcess);
+ 
+    exit
+ }
+
 # https://github.com/lukesampson/scoop
 Set-ExecutionPolicy RemoteSigned -scope CurrentUser
 Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')
@@ -16,7 +27,6 @@ scoop bucket add extras
 scoop install git
 # which
 scoop install which
-
 # make
 scoop install make
 
@@ -39,9 +49,8 @@ scoop install go
 # protoc
 scoop install protobuf
 
-
 # glfw
-# Do we need it ?
+# Do we need it for Windows ?
 # If we do: https://github.com/Deide/deide-bucket/blob/master/bucket/glfw.json
 
 # gcc
@@ -54,5 +63,6 @@ scoop install gcc
 
 # flutter
 # NOT needed. hover does it.
-scoop bucket add java
+#scoop bucket add java
+scoop install android-studio
 scoop install flutter
