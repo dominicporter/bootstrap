@@ -1,0 +1,6 @@
+bin
+
+.DS_Store
+
+*.rice-box.go
+*.rice-box.syso

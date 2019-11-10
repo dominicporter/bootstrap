@@ -19,6 +19,24 @@ gen_migrations:
 test: 
 	#go test -cover $(PACKAGES)
 
+bootstrap:
+ifeq ($(OS),Windows_NT)
+	# install 
+	scoop install docker
+else 
+	UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Linux)
+	# linux
+	#apt install libglfw
+endif
+ifeq ($(UNAME_S),Darwin)
+	# run bash
+	cd mac && ./bootstrap.bash
+endif
+endif
+	
+
+
 build: build_go
 
 build_go:
@@ -31,6 +49,10 @@ build_go:
 	#go build -o bin/app .
 	#go build -o bin/bulksender ./consumers/bulksender
 	#go build -o bin/campaigner ./consumers/campaigner
+
+build-flutter:
+	cd $(PWD)/example/flutter/go-flutter-desktop/examples && $(MAKE) all
+
 
 build_static:
 	cd dashboard; yarn && yarn build

@@ -42,6 +42,7 @@ code:
 
 os-dep:
 ifeq ($(OS),Windows_NT)
+	# install 
 	scoop install docker
 else 
 	UNAME_S := $(shell uname -s)
