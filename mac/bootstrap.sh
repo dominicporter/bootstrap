@@ -28,8 +28,6 @@ brew cask install visual-studio-code
 # go
 brew install go
 
-
-
 # protoc
 scoop install protobuf
 
@@ -41,22 +39,6 @@ scoop install protobuf
 # needed for golang CGO etc.
 brew install gcc
 
-# dart
-# I dont think its needed actually... we see.
-#scoop install dart-dev
-
-# flutter
-# NOT needed. hover does it.
-
-# see: https://github.com/flutter/flutter/issues/14050
-
-# using this one: https://github.com/socheatsok78/homebrew-flutter
-# currently NOT working due to Mac Calolina security lockdown.. 
-#brew cask install socheatsok78/flutter/flutter
-
-# https://github.com/leoafarias/fvm
-pub global activate fvm
-
 
 # flutter IOS stuff
 brew install --HEAD libimobiledevice
@@ -66,6 +48,13 @@ pod setup
 # sometimes needed
 # brew upgrade cocoapods
 
-# flutter android stuff
+# flutter
+# needs a fw other things first
 brew cask install adoptopenjdk
 brew cask install android-studio
+
+# flutter
+# best to install via git clone
+
+
+

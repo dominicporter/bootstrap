@@ -57,8 +57,8 @@ scoop install gcc
 # flutter
 # needs a few things to compile for android
 scoop bucket add java
-# Use open JDK NOT the oracle openjdk
-scoop install adoptopenjdk
+# DOnt use Oracles Java !
+scoop install adoptopenjdk-hotspot
 java -version
 
 scoop install android-studio
