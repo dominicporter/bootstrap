@@ -7,9 +7,7 @@ jobs:
   dep:
     runs-on: windows-2019
     steps:
-    - uses: actions/checkout@master
-    - uses: ./
-    - run: git checkout master
+    - uses: actions/checkout@v1
     - name: Run a one-line script
       run: .\win\bootstrap.ps1
       shell: powershell
