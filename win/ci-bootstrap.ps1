@@ -59,8 +59,7 @@ scoop install gcc
 scoop bucket add java
 # DOnt use Oracles Java !
 scoop install adoptopenjdk-hotspot
-java -version
-
+# its fat but it gets us everything we need
 scoop install android-studio
 
 # https://github.com/lukesampson/scoop-extras/blob/master/bucket/flutter.json
