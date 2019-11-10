@@ -1,5 +1,8 @@
 name: Bootstrap
-on: [push]
+on:
+  push:
+    branches:
+    - master
 jobs:
   dep:
     runs-on: windows-2019

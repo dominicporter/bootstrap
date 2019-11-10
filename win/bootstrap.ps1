@@ -1,5 +1,3 @@
-# Stuff i need
-
 # RUN THIS in powershell
 
 # https://github.com/lukesampson/scoop
