@@ -1,5 +1,7 @@
 # see: https://github.com/news-maily/app/blob/master/Makefile
 
+
+
 .PHONY: build
 
 ifneq ($(shell uname), Darwin)
@@ -7,6 +9,13 @@ ifneq ($(shell uname), Darwin)
 else
 	EXTLDFLAGS =
 endif
+
+OS_NAME := $(shell uname -s | tr A-Z a-z)
+
+os:
+	@echo $(OS_NAME)
+
+
 
 PACKAGES = $(shell go list ./... | grep -v /vendor/)
 
