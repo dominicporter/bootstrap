@@ -11,7 +11,8 @@ Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.
 scoop update
 
 # multiple connections for scoop
-#scoop install aria2
+scoop install aria2
+scoop config aria.enabled true
 
 # extra repo has the other stuff we need
 scoop bucket add extras
@@ -56,11 +57,11 @@ scoop install gcc
 
 # flutter
 # needs a few things to compile for android
-scoop bucket add java
+#scoop bucket add java
 # DOnt use Oracles Java !
-scoop install adoptopenjdk-hotspot
+#scoop install adoptopenjdk-hotspot
 # its fat but it gets us everything we need
-scoop install android-studio
+#scoop install android-studio
 
 # https://github.com/lukesampson/scoop-extras/blob/master/bucket/flutter.json
 # then calls: https://raw.githubusercontent.com/lukesampson/scoop-extras/master/scripts/flutter-dev-setup.ps1
