@@ -5,7 +5,6 @@
 
 ## Design
 
-
 In debug mode, allow the data to update live when changed in the gsheet
 - runs in untyped mode
 - makes a call direct into gsheets via server
@@ -17,7 +16,6 @@ In release mode, does not allow any live updating
 - Compiled differently to gen different dart code.
 
 ## URLS
-
 
 GOOGLE_SHEET_ID = 16eeYgh8dus50fISokKK8TMVWLR8A18Er-p5dBcO0FYw
 GOOGLE_SHEET_URL = https://docs.google.com/spreadsheets/d/$(GOOGLE_SHEET_ID)
@@ -32,10 +30,6 @@ https://github.com/bratan/flutter_translate
 https://github.com/bratan/flutter_translate_gen
 
 
-
-golang gsheet csv
-doc: https://medium.com/@bnprashanth256/read-google-sheet-content-in-go-golang-ea2d4db6e5f3
-code: https://github.com/BNPrashanth/gsheet-to-json-csv
 
 ## Cloud run
 
