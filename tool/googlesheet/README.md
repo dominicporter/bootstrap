@@ -12,7 +12,7 @@ File -> Publish to the web -> "Sheet name" option and "csv" option
 
 
 
-## Design
+## Design (for much later)
 
 In debug mode, allow the data to update live when changed in the gsheet
 - runs in untyped mode
