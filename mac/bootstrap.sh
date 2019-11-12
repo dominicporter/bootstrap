@@ -55,6 +55,9 @@ brew cask install android-studio
 
 # flutter
 # best to install via git clone
+mkdir $(HOME)/workspace
+cd $(HOME)/workspace && git clone -b master https://github.com/flutter/flutter.git
+./flutter/bin/flutter --version
 
 
 
