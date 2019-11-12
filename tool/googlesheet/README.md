@@ -1,5 +1,14 @@
 # google sheet
 
+If oyu want to make a GSHeet exposed as a CSV just web publish it that way in the google drive.
+
+https://support.google.com/docs/answer/183965?co=GENIE.Platform%3DDesktop&hl=en
+
+As CSV:
+Open google sheet
+File -> Publish to the web -> "Sheet name" option and "csv" option
+
+
 
 
 
