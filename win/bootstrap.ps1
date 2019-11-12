@@ -53,5 +53,6 @@ scoop install gcc
 #scoop install dart-dev
 
 # flutter
-# NOT needed. hover does it.
 scoop install flutter
+# OR git clone like in the MAC bootstrap.
+# Can someone on make test this and ad the correct code :)
