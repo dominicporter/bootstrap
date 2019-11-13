@@ -44,7 +44,8 @@ ifeq ($(UNAME_S),Darwin)
 endif
 endif
 	
-
+tools:
+	go build -o ./bootstrap main.go
 
 build: build_go
 

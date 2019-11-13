@@ -13,7 +13,7 @@ jobs:
   ci:
     strategy:
       matrix:
-        go-version: [1.12.x, 1.13.x]
+        go-version: [1.13.x]
         platform: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.platform }}
     steps:
@@ -23,18 +23,5 @@ jobs:
         uses: actions/setup-go@v1
         with:
           go-version: ${{ matrix.go-version }}
-      - name: Install Mage
-        run: |
-          #export GOPATH=$(go env GOPATH)
-          go get -u -d github.com/magefile/mage
-          cd $GOPATH/src/github.com/magefile/mage
-          go run bootstrap.go
-        #env:
-          #GOPATH: /home/runner/go
-      - name: Run Mage
-        run: |
-          #export GOPATH=$(go env GOPATH)
-          #export PATH=$PATH:$GOPATH/bin
-          #$GOPATH/bin/mage -help
-          mage -help
+      - run: go run main.go
 

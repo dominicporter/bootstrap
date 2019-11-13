@@ -15,5 +15,8 @@ doc/api/
 # binaries built
 bin
 
+# exe
+./bootstrap
+
 # mac crap
 .DS_Store
