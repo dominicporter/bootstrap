@@ -1,6 +1,7 @@
 package config
 
 import (
+	"github.com/spf13/viper"
 	"time"
 )
 
@@ -46,3 +47,35 @@ var (
 	// RouteCalcDelayStdDev is standard deviation
 	RouteCalcDelayStdDev = RouteCalcDelay / 4
 )
+
+// Settings consists of all the application configuration
+type Settings struct {
+	GoogleSheet Config
+}
+type Config struct {
+	ID  string
+	URL string
+	CSV string
+}
+
+// New creates an instance of the application's configuration
+func New() (*Settings, error) {
+	v := viper.New()
+
+	v.SetConfigName("config")
+	v.SetConfigType("yml")
+	v.AddConfigPath(".")
+
+	err := v.ReadInConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	return &Settings{
+		GoogleSheet: Config{
+			ID:  v.GetString("GOOGLE_SHEET.ID"),
+			URL: v.GetString("GOOGLE_SHEET.URL"),
+			CSV: v.GetString("GOOGLE_SHEET.CSV"),
+		},
+	}, nil
+}

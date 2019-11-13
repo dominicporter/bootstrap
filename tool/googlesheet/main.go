@@ -1,38 +1,49 @@
 package main
 
 import (
-	s "github.com/winwisely99/bootstrap/tool/googlesheet/services"
-	"os"
+	"fmt"
+	Services "github.com/winwisely99/bootstrap/tool/googlesheet/services"
+	"github.com/winwisely99/bootstrap/tool/googlesheet/services/config"
 	"log"
-	
-	"path/filepath"
+	"os"
 )
 
 func main() {
-
-	// show line numbers
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	
+
+	Setting, err := config.New()
+	if err != nil {
+		log.Println("No conf file founded")
+		return
+
+	}
+	fmt.Println(Setting)
+	// show line numbers
+	/*Url := flag.String("url", "empty", "Url of googleSheet")
+	flag.Parse()
+	if *Url == "empty" {
+		log.Println("\nBad input.\nPlease enter valid url.")
+		return
+
+	}*/
 	log.Println("Starting Extracting Language Files from GoogleSheet - downloading csv approach..")
+	//gsheetURL := "https://docs.google.com/spreadsheets/d/e/2PACX-1vQIhLNNfUKVjxMkMwdtTFnvuV8oN1H_OmgOWRCwHBkSfOo1fzA08LXDfcK4EA86fx18M4FeAIwOoBBR/pub?output=csv"
+	gsheetURL := Setting.GoogleSheet.CSV
+	csvRelFilePath := "./outputs/" + Setting.GoogleSheet.ID + ".csv"
+	csvAbsFilePath, err := Services.GetAbsoluteFilePath(csvRelFilePath)
 
-	gsheetURL := "https://docs.google.com/spreadsheets/d/e/2PACX-1vQIhLNNfUKVjxMkMwdtTFnvuV8oN1H_OmgOWRCwHBkSfOo1fzA08LXDfcK4EA86fx18M4FeAIwOoBBR/pub?output=csv"
-
-	csvRelFilePath := "./outputs/gsheet.csv"
-	csvAbsFilePath, err := getAbsoluteFilePath(csvRelFilePath)
-
-	err = getCSV(gsheetURL, csvAbsFilePath)
+	err = Services.Download(gsheetURL, csvAbsFilePath, 5000)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
 	}
 
-
-	jsonRelDirPath  := "./outputs/json"
-	jsonAbsDirPath, err := getAbsoluteFilePath(jsonRelDirPath)
+	jsonRelDirPath := "./outputs/json"
+	jsonAbsDirPath, err := Services.GetAbsoluteFilePath(jsonRelDirPath)
 
 	log.Println("JSON Output directory: " + jsonAbsDirPath)
 
-	err = s.WriteLanguageFiles(csvAbsFilePath, jsonAbsDirPath)
+	err = Services.WriteLanguageFiles(csvAbsFilePath, jsonAbsDirPath)
 	if err != nil {
 		log.Println(err)
 		os.Exit(1)
@@ -40,22 +51,3 @@ func main() {
 
 	log.Println("Completed Execution..")
 }
-
-func getAbsoluteFilePath(relFilePath string ) (result string, err error) {
-	dir, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
-	absFilePath := filepath.Join(dir, relFilePath)
-
-	return absFilePath, nil
-
-}
-
-
-func getCSV(sourceURL string, targetFilePath string) (err error) {
-	err = s.Download(sourceURL,targetFilePath,5000)
-	return err
-}
-
-
