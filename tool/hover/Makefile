@@ -80,3 +80,10 @@ go-build-clean:
 
 	$(MAKE) go-build-list
 
+ci:
+	# usesd by CI
+	$(MAKE) git-clone
+	cd $(LIB_FSPATH) && GOOS=darwin go build -o $(LIB_BIN_FSPATH) .
+
+
+

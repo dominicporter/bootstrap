@@ -1,5 +1,8 @@
 
-Check the windows bootstrap is idempotent
+Use github actions to install the basics
 
-Check go-flutter works
-- currently its make files and 
+then use mage so we get OS indepence
+https://github.com/crazy-max/ghaction-mage
+
+HUGO
+https://github.com/mtpereira/parede
