@@ -11,35 +11,30 @@ on:
       - releases/*
 jobs:
   ci:
-    runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
-        os:
-          - ubuntu-latest
-          - macOS-latest
-          - windows-latest
-        version:
-          - latest
-          - 1.8.0
+        go-version: [1.12.x, 1.13.x]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.platform }}
     steps:
-      -
-        name: Checkout this commit
+      - name: Checkout this commit
         uses: actions/checkout@v1
-      -
-        name: Set up Go
-        uses: actions/setup-go@master
+      - name: Set up Go
+        uses: actions/setup-go@v1
+          with:
+            go-version: ${{ matrix.go-version }}
       - name: Install Mage
         run: |
-          export GOPATH=$(go env GOPATH)
+          #export GOPATH=$(go env GOPATH)
           go get -u -d github.com/magefile/mage
           cd $GOPATH/src/github.com/magefile/mage
           go run bootstrap.go
-        env:
-          GOPATH: /home/runner/go
+        #env:
+          #GOPATH: /home/runner/go
       - name: Run Mage
         run: |
-          export GOPATH=$(go env GOPATH)
-          export PATH=$PATH:$GOPATH/bin
-          $GOPATH/bin/mage -v
+          #export GOPATH=$(go env GOPATH)
+          #export PATH=$PATH:$GOPATH/bin
+          #$GOPATH/bin/mage -help
+          mage -help
 
