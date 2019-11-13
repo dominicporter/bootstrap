@@ -14,6 +14,17 @@ import (
 	"github.com/pkg/errors"
 )
 
+func GetAbsoluteFilePath(relFilePath string) (result string, err error) {
+	dir, err := os.Getwd()
+	if err != nil {
+		log.Fatal(err)
+	}
+	absFilePath := filepath.Join(dir, relFilePath)
+
+	return absFilePath, nil
+
+}
+
 // TODO: Use the new error handling patterns
 //var ErrPermission = errors.New("permission denied")
 
@@ -114,7 +125,10 @@ func WriteLanguageFiles(csvFilePath string, jsonDirPath string) error {
 		if err != nil {
 			return errors.New("Cannot write to file:" + lang)
 		}
-		file.Close()
+		err = file.Close()
+		if err != nil {
+			return errors.New("Cannot Close to file:" + lang)
+		}
 	}
 	return nil
 }
@@ -123,8 +137,10 @@ func createFile(path string) {
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		// create dir (or 0755)
 		dir := filepath.Dir(path)
-		os.MkdirAll(dir, 0700)
-
+		err = os.MkdirAll(dir, 0700)
+		if isError(err) {
+			return
+		}
 		// Create your file
 		var file, err = os.Create(path)
 		if isError(err) {
@@ -136,7 +152,7 @@ func createFile(path string) {
 	log.Println("==> done creating file", path)
 }
 
-func createDirectory(dirName string) bool {
+/*func createDirectory(dirName string) bool {
 	src, err := os.Stat(dirName)
 
 	if os.IsNotExist(err) {
@@ -154,12 +170,12 @@ func createDirectory(dirName string) bool {
 	}
 
 	return false
-}
+}*/
 
 func isError(err error) bool {
 	if err != nil {
 		log.Println(err.Error())
 	}
 
-	return (err != nil)
+	return err != nil
 }
