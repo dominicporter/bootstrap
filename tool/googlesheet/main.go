@@ -1,30 +1,35 @@
 package main
 
 import (
-	"flag"
+	"fmt"
 	Services "github.com/winwisely99/bootstrap/tool/googlesheet/services"
+	"github.com/winwisely99/bootstrap/tool/googlesheet/services/config"
 	"log"
 	"os"
-	"strconv"
-	TimeLib "time"
 )
 
 func main() {
-
-	// show line numbers
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	Url := flag.String("url", "empty", "Url of googleSheet")
+
+	Setting, err := config.New()
+	if err != nil {
+		log.Println("No conf file founded")
+		return
+
+	}
+	fmt.Println(Setting)
+	// show line numbers
+	/*Url := flag.String("url", "empty", "Url of googleSheet")
 	flag.Parse()
 	if *Url == "empty" {
 		log.Println("\nBad input.\nPlease enter valid url.")
 		return
 
-	}
+	}*/
 	log.Println("Starting Extracting Language Files from GoogleSheet - downloading csv approach..")
 	//gsheetURL := "https://docs.google.com/spreadsheets/d/e/2PACX-1vQIhLNNfUKVjxMkMwdtTFnvuV8oN1H_OmgOWRCwHBkSfOo1fzA08LXDfcK4EA86fx18M4FeAIwOoBBR/pub?output=csv"
-	gsheetURL := *Url
-	timeStamp := TimeLib.Now().Unix()
-	csvRelFilePath := "./outputs/" + strconv.FormatInt(timeStamp, 10) + "-gsheet.csv"
+	gsheetURL := Setting.GoogleSheet.CSV
+	csvRelFilePath := "./outputs/" + Setting.GoogleSheet.ID + ".csv"
 	csvAbsFilePath, err := Services.GetAbsoluteFilePath(csvRelFilePath)
 
 	err = Services.Download(gsheetURL, csvAbsFilePath, 5000)
