@@ -29,7 +29,6 @@ jobs:
       -
         name: Set up Go
         uses: actions/setup-go@master
-      -
       - name: Install Mage
         run: |
           export GOPATH=$(go env GOPATH)
