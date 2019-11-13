@@ -1,0 +1,46 @@
+# see: https://raw.githubusercontent.com/mtpereira/parede/fb38213a8dbdf98daffe35c895df14d05afe5e2b/.github/workflows/preview.yml
+name: tool
+on:
+  pull_request:
+    branches:
+      - master
+      - releases/*
+  push:
+    branches:
+      - master
+      - releases/*
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macOS-latest
+          - windows-latest
+        version:
+          - latest
+          - 1.8.0
+    steps:
+      -
+        name: Checkout this commit
+        uses: actions/checkout@v1
+      -
+        name: Set up Go
+        uses: actions/setup-go@master
+      -
+      - name: Install Mage
+        run: |
+          export GOPATH=$(go env GOPATH)
+          go get -u -d github.com/magefile/mage
+          cd $GOPATH/src/github.com/magefile/mage
+          go run bootstrap.go
+        env:
+          GOPATH: /home/runner/go
+      - name: Run Mage
+        run: |
+          export GOPATH=$(go env GOPATH)
+          export PATH=$PATH:$GOPATH/bin
+          $GOPATH/bin/mage -v
+
