@@ -2,8 +2,11 @@
 
 An approach to i18n and i10l that is decoupled so that it can be used by any projects or architecture.
 
+Its very simple.
 
-The system supports custom templates which is vital for i10l aspects and gives absolute flexibility for things such as:
+It can be used by any language since it is JSON data and the key is a template like a mustache style. You can change the template format in the Google Spreadsheet to suit your underlying Application framework ( python, dart, ruby, etc)
+
+The system can do normal i18n aspects, but supports custom templates which are vital such corner cases as:
 
 Gender
 
@@ -26,7 +29,6 @@ Pluralisation
 
 The API and data format will change as we are extending it currently.
 
-Used by winwisely / getcouragenow.org currently for web, desktop & mobile apps based on flutter and golang.
 
 
 ## Use Cases
@@ -34,26 +36,28 @@ Used by winwisely / getcouragenow.org currently for web, desktop & mobile apps b
 It is used for the following use cases:
 
 Making Test data for your apps or servers.
-- As an asset in Flutter for Mock data.
+- We use it as an asset in Flutter for Mock data.
 
 Making I18n data for your GUI.
-- Write Dart annotators and use sourgen to read the JSON and gen the dart code.
+- We use it together with  Dart annotators to read the JSON and gen the dart code.
 
-Making static content like markdown.
-- For Hugo static sites.
-- Parse the JSON and place the markdown directly into the i18n folders.
+Making static content like markdown for your website.
+- We use it for  Hugo static sites.
+- Just need to script the parsing of the JSON and placing of the markdown directly into the i18n folders. Then you site is localised.
 
 ## Using
 
-Its a single binary on your laptop.
+Its a single binary on your laptop Or in CI.
 
-1. Setup your gsheet based on the Test gsheet. ( Language codes: https://cloud.google.com/translate/docs/languages )
+1. Copy one of the Test Google Sheets to your project. See the Test URLS.
 
-2. Open your google sheet: File -> Publish to the web -> "Sheet name" option and "csv" option
+3. Add the languages you want by column. ( Language codes: https://cloud.google.com/translate/docs/languages )
 
-3. Then update the gsheet config in your repo with this CSV URL.
+3. Open your google sheet: File -> Publish to the web -> "Sheet name" option and "csv" option
 
-4. Then run the gsheet tool in terminal. This will give you the data as JSON with a JSON file per language.
+4. Then update the gsheet config in your repo with the correct ULRS to your Google Sheet and published CSV.
+
+5. Then run the gsheet tool in the terminal. This will give you the data as JSON with a JSON file per language. 
 
 ## Roadmap
 
@@ -65,7 +69,7 @@ Its not hard coupled to google. It uses Google sheets ( and its inherent google 
 	- So make a self hosted equivalent. There are various ones out there and we only need a basic table structure
 - Machine translation
 	- The server can use the various third party ones out there. Easy to do.
-	- Reactive. Google Sheets are reactive in that when you change the source text all the secondary languages up date in real tiem in front of you.
+	- Reactive. Google Sheets are reactive in that when you change the source text all the secondary languages up date in real time in front of you.
 		- SO with our own Server we can do the same with a websocket / GRPC style approach.
 - Export
 	- This is easy because the data is on our own server.
@@ -121,5 +125,3 @@ GOOGLE_SHEET_URL = https://docs.google.com/spreadsheets/d/$(GOOGLE_SHEET_ID)
 GOOGLE_SHEET_URL (computed) = https://docs.google.com/spreadsheets/d/16eeYgh8dus50fISokKK8TMVWLR8A18Er-p5dBcO0FYw/edit#gid=0
 
 GOOGLE_SHEET_CSV = https://docs.google.com/spreadsheets/d/e/2PACX-1vTrndYJtszNP2_VL2t_z7wa03v2R01yq3wfRi4-RgmJMzXIEMzAX4OybZT7eEiqcmkZLWcFJhwJqJzA/pub?output=csv
-
-
