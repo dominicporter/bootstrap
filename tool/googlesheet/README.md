@@ -1,12 +1,11 @@
 # google sheet
 
-An approach to i18n and i10l that is decoupled so that it can be used by app projects.
+An approach to i18n and i10l that is decoupled so that it can be used by any projects or architecture.
 
-How many languages ? https://cloud.google.com/translate/docs/languages
 
-The system supports custom templates which is vital for i10l aspects and gives absolute flexibiity for things such as:
+The system supports custom templates which is vital for i10l aspects and gives absolute flexibility for things such as:
 
-Gender 
+Gender
 
 | Key        | Fr           | En           | 
 |-------------|-------------|-------------- | 
@@ -23,39 +22,44 @@ Pluralisation
 |`plurals.man(Plural.zero)`| hommes | man
 |`plurals.man(Plural.one)`| Mme {{last_name}} | Mrs {{last_name}}
 
+## Status
+
+The API and data format will change as we are extending it currently.
+
+Used by winwisely / getcouragenow.org currently for web, desktop & mobile apps based on flutter and golang.
+
+
+## Use Cases
+
+It is used for the following use cases:
+
+Making Test data for your apps or servers.
+- As an asset in Flutter for Mock data.
+
+Making I18n data for your GUI.
+- Write Dart annotators and use sourgen to read the JSON and gen the dart code.
+
+Making static content like markdown.
+- For Hugo static sites.
+- Parse the JSON and place the markdown directly into the i18n folders.
 
 ## Using
 
-If you want to make a GSHeet exposed as a CSV just web publish it that way in the google drive.
+Its a single binary on your laptop.
 
-https://support.google.com/docs/answer/183965?co=GENIE.Platform%3DDesktop&hl=en
+1. Setup your gsheet based on the Test gsheet. ( Language codes: https://cloud.google.com/translate/docs/languages )
 
+2. Open your google sheet: File -> Publish to the web -> "Sheet name" option and "csv" option
 
-Open google sheet:
-File -> Publish to the web -> "Sheet name" option and "csv" option
+3. Then update the gsheet config in your repo with this CSV URL.
 
-Then update your config in your repo with this CSV Publishes URL.
-
-Then as a dev kick off an export. This will give you the data as JSON with a JSON file per language.
-
-From here you can essentially do anything you want with it.
-
-GUI Test Data
-- Copy it as an asset into the flutter assets and use as a read only DB
-
-I18n 
-- Write Dart annotators and use sourgen to read the JSON and gen the dart code.
-
-Web Site staic content like markdown.
-- Parse the JSON for the content you want and pump it into your wen site as appropriate.
-
-
+4. Then run the gsheet tool in terminal. This will give you the data as JSON with a JSON file per language.
 
 ## Roadmap
 
 ### Decouple from google
 
-Its not hard coupled to google. It uses Google sheets ( and its inherent googele translate ) at the moment only for convenience. Its designed to be able to use anything for display, storage and machine translation.
+Its not hard coupled to google. It uses Google sheets ( and its inherent google translate ) at the moment only for convenience. Its designed to be able to use anything for display, storage and machine translation.
 
 - Its important that there is a GUI like google sheets so the cognitive load is as low as pssible.
 	- So make a self hosted equivalent. There are various ones out there and we only need a basic table structure
@@ -119,39 +123,3 @@ GOOGLE_SHEET_URL (computed) = https://docs.google.com/spreadsheets/d/16eeYgh8dus
 GOOGLE_SHEET_CSV = https://docs.google.com/spreadsheets/d/e/2PACX-1vTrndYJtszNP2_VL2t_z7wa03v2R01yq3wfRi4-RgmJMzXIEMzAX4OybZT7eEiqcmkZLWcFJhwJqJzA/pub?output=csv
 
 
-## Libs
-
-Flutter: https://github.com/aloisdeniel/flutter_sheet_localization
-
-https://github.com/bratan/flutter_translate
-- uses https://github.com/bratan/flutter_device_locale
-https://github.com/bratan/flutter_translate_gen
-
-Golang Gsheets: https://github.com/Iwark/spreadsheet/blob/v2/service.go
-
-
-
-
-## Ops - Cloud run
-
-Set it up to deploy on git commit.
-https://cloud.google.com/run/docs/continuous-deployment-with-cloud-build
-
-
-
-## Ops
-
-ToDO
-
-proper logging
-"go.uber.org/zap"
-https://github.com/knative/serving/blob/master/pkg/reconciler/autoscaling/hpa/hpa.go
-- uses knative.dev/pkg/logging
-https://github.com/knative/pkg/tree/master/metrics
-https://github.com/knative/pkg/tree/master/logging
-
-
-propper logging, tracing and metrics
-https://github.com/jaegertracing/jaeger/tree/master/examples/hotrod
-- this looks strong
-- Here is how to setup the entry point: https://github.com/jaegertracing/jaeger/blob/master/examples/hotrod/cmd/root.go#L77
