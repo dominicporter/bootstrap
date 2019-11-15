@@ -2,6 +2,27 @@
 
 An approach to i18n and i10l that is decoupled so that it can be used by app projects.
 
+How many languages ? https://cloud.google.com/translate/docs/languages
+
+The system supports custom templates which is vital for i10l aspects and gives absolute flexibiity for things such as:
+
+Gender 
+
+| Key        | Fr           | En           | 
+|-------------|-------------|-------------- | 
+|`templated.contact(Gender.male)`| M. {{last_name}} | Mr {{last_name}}
+|`templated.contact(Gender.female)`| Mme {{last_name}} | Mrs {{last_name}}
+
+
+
+
+Pluralisation
+
+| Key        | Fr           | En           | 
+|-------------|-------------|-------------- | 
+|`plurals.man(Plural.zero)`| hommes | man
+|`plurals.man(Plural.one)`| Mme {{last_name}} | Mrs {{last_name}}
+
 
 ## Using
 
@@ -105,6 +126,9 @@ Flutter: https://github.com/aloisdeniel/flutter_sheet_localization
 https://github.com/bratan/flutter_translate
 - uses https://github.com/bratan/flutter_device_locale
 https://github.com/bratan/flutter_translate_gen
+
+Golang Gsheets: https://github.com/Iwark/spreadsheet/blob/v2/service.go
+
 
 
 
