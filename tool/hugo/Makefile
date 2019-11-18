@@ -50,6 +50,9 @@ code:
 build: ## build
 	# builds into GO BIN
 	cd $(LIB_FSPATH) && go install --tags extended
+	
+build-clean: ## build-clean
+	rm $(GOPATH)/bin/hugo
 
 
 

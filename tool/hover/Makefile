@@ -3,7 +3,7 @@
 LIB_NAME=hover
 LIB=github.com/go-flutter-desktop/$(LIB_NAME)
 LIB_BRANCH=master
-LIB_TAG=v0.36.0
+LIB_TAG=v0.37.0
 LIB_FSPATH=$(GOPATH)/src/$(LIB)
 
 LIB_BIN_NAME=$(LIB_NAME)
@@ -69,6 +69,9 @@ endif
 build: ## build
 	# builds into GO BIN
 	cd $(LIB_FSPATH) && go build -o $(LIB_BIN_FSPATH) .
+
+build-clean: ## build-clean
+	rm $(LIB_BIN_FSPATH)
 
 
 
