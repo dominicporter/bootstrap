@@ -3,15 +3,23 @@
 package main
 
 import (
+	"filepath"
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/magefile/mage/mg"
 	"github.com/magefile/mage/sh"
 	"github.com/magefile/mage/target"
+	"github.com/pkg/errors"
 )
+
+// global variables to streamline magefile
+var tempDir string
+var cwd string
+var version string
 
 const (
 	postsDir    = "./docs/post"
@@ -61,6 +69,16 @@ func buildTags() string {
 
 }
 
+// Print variables
+func Print() error {
+
+	fmt.Println(goexe)
+	fmt.Println(tempDir)
+	fmt.Println(cwd)
+
+	return nil
+}
+
 // Build bootstrap binary
 func Bootstrap() error {
 	//return sh.RunWith(flagEnv(), goexe, "build", "-ldflags", ldflags, "-tags", buildTags(), packageName)
@@ -96,11 +114,23 @@ func Uninstall() error {
 	return err
 }
 
+func cloneHugo() error {
+
+	fmt.Println("cloning hugo...")
+	dir := filepath.Join(tempDir, "caddy")
+	if err := sh.Run("git", "clone", "-q", "https://github.com/mholt/caddy", dir); err != nil {
+		return errors.Wrap(err, "failed to clone caddy")
+	}
+	return nil
+
+}
+
 func installHugo() error {
 	// TO go bin
 	verbose("installing hugo...")
 
 	// TODO - try using to git clone so it matches makes TAGs, etc and we dont get messed up with go mod fun.
+	sh.RunWith(flagEnv(), goexe, "install", "github.com/gohugoio/hugo", "-tags", "extended")
 
 	//sh.Run("go", "get", "github.com/gohugoio/hugo")
 	//sh.RunWith(flagEnv(), goexe, "build", "-tags", "extended", "github.com/gohugoio/hugo")
