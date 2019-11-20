@@ -14,10 +14,10 @@ import (
 	"github.com/pkg/errors"
 )
 
-func GetAbsoluteFilePath(relFilePath string) (result string, err error) {
+func GetAbsoluteFilePath(relFilePath string, sheet string) (result string, err error) {
 	dir, err := os.Getwd()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal(sheet, " : ", err)
 	}
 	absFilePath := filepath.Join(dir, relFilePath)
 
@@ -29,33 +29,33 @@ func GetAbsoluteFilePath(relFilePath string) (result string, err error) {
 //var ErrPermission = errors.New("permission denied")
 
 // Download exported
-func Download(url string, filename string, timeout int64) (err error) {
+func Download(url string, filename string, timeout int64, sheet string) (err error) {
 
 	// show line numbers
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	log.Println("Downloading", url, "...")
+	log.Println(sheet, " : ", "Downloading", url, "...")
 	client := http.Client{
 		Timeout: time.Duration(timeout * int64(time.Second)),
 	}
 	resp, err := client.Get(url)
 	if err != nil {
-		log.Println("Cannot download file from the given url", err)
+		log.Println(sheet, " : ", "Cannot download file from the given url", err)
 		return err
 	}
 
 	if resp.StatusCode != 200 {
-		log.Printf("Response from the URL was %d, but expecting 200", resp.StatusCode)
+		log.Printf("%v : Response from the URL was %d, but expecting 200", sheet, resp.StatusCode)
 		return errors.New("Response returned with a status different from 200")
 	}
-	if resp.Header["Content-Type"][0] != "text/csv" {
-		log.Printf("The file downloaded has content type '%s', expected 'text/csv'.", resp.Header["Content-Type"])
+	if resp.Header["Content-Type"][0] != "text/csv" && resp.Header["Content-Type"][0] != "text/csv; charset=utf-8" {
+		log.Printf(sheet, " : ", "The file downloaded has content type '%s', expected 'text/csv'.", resp.Header["Content-Type"])
 		return errors.New("Downloaded file didn't contain the expected content-type: 'text/csv'")
 	}
 
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println("Cannot read Body of Response", err)
+		log.Println(sheet, " : ", "Cannot read Body of Response", err)
 		return errors.New("Cannot read Body of Response")
 	}
 
@@ -63,21 +63,21 @@ func Download(url string, filename string, timeout int64) (err error) {
 
 	err = ioutil.WriteFile(filename, b, 0644)
 	if err != nil {
-		log.Println("Cannot write to file", err)
+		log.Println(sheet, " : ", "Cannot write to file", err)
 		return errors.New("Cannot write to file")
 	}
 
-	log.Println("Doc downloaded in ", filename)
+	log.Println(sheet, " : ", "Doc downloaded in ", filename)
 
 	return nil
 }
 
 // WriteLanguageFiles exported
-func WriteLanguageFiles(csvFilePath string, jsonDirPath string) error {
+func WriteLanguageFiles(csvFilePath string, jsonDirPath string, sheet string) error {
 	csvFile, err := os.Open(csvFilePath)
 	if err != nil {
-		log.Println("Cannot open file:"+csvFilePath, err)
-		return errors.Wrap(err, "Cannot open file:"+csvFilePath)
+		log.Println(sheet, " : ", "Cannot open file:"+csvFilePath, err)
+		return errors.Wrap(err, sheet+" : "+"Cannot open file:"+csvFilePath)
 
 	}
 	// get csf file content
@@ -94,7 +94,7 @@ func WriteLanguageFiles(csvFilePath string, jsonDirPath string) error {
 
 		langAbsPath, err := filepath.Abs(langFilePath)
 		if err != nil {
-			log.Println("Cannot get path specified: \""+langAbsPath+"\"", err)
+			log.Println(sheet, " : ", "Cannot get path specified: \""+langAbsPath+"\"", err)
 			return errors.New("Cannot get path specified:" + langFilePath)
 		}
 
@@ -102,8 +102,8 @@ func WriteLanguageFiles(csvFilePath string, jsonDirPath string) error {
 
 		file, err := os.OpenFile(langAbsPath, os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			log.Println("Cannot open file: \""+langAbsPath+"\"", err)
-			return errors.Wrap(err, "Cannot open file: \""+langAbsPath+"\"")
+			log.Println(sheet, " : ", "Cannot open file: \""+langAbsPath+"\"", err)
+			return errors.Wrap(err, sheet+" : "+"Cannot open file: \""+langAbsPath+"\"")
 		}
 
 		//log.Println("langAbsPath: \"" + langAbsPath + "\"")
@@ -178,4 +178,60 @@ func isError(err error) bool {
 	}
 
 	return err != nil
+}
+
+// WriteLanguageFiles exported
+func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) error {
+	csvFile, err := os.Open(csvFilePath)
+	if err != nil {
+		log.Println(sheet, " : ", "Cannot open file:"+csvFilePath, err)
+		return errors.Wrap(err, "Cannot open file:"+csvFilePath)
+
+	}
+	// get csf file content
+	csvFileContent, err := csv.NewReader(csvFile).ReadAll()
+	if err != nil {
+		return errors.New("Cannot read file:" + csvFilePath)
+	}
+	keys := csvFileContent[0][0:]
+	// walk content for each lang
+	var data []map[string]string
+	for rowIndex, row := range csvFileContent[1:][0:] {
+		data = append(data, map[string]string{})
+		for columnIndex, key := range keys {
+			data[rowIndex][key] = row[columnIndex]
+		}
+	}
+	FileName := sheet + ".json"
+
+	FilePath := filepath.Join(jsonDirPath, FileName)
+
+	AbsPath, err := filepath.Abs(FilePath)
+	if err != nil {
+		log.Println(sheet, " : ", "Cannot get path specified: \""+AbsPath+"\"", err)
+		return errors.New("Cannot get path specified:" + FilePath)
+	}
+
+	createFile(AbsPath)
+
+	file, err := os.OpenFile(AbsPath, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(sheet, " : ", "Cannot open file: \""+AbsPath+"\"", err)
+		return errors.Wrap(err, "Cannot open file: \""+AbsPath+"\"")
+	}
+
+	err = file.Truncate(0)
+	if err != nil {
+		return errors.New("Cannot truncate file:" + sheet)
+	}
+	encodedJSON, _ := json.Marshal(data)
+	_, err = file.Write(encodedJSON)
+	if err != nil {
+		return errors.New("Cannot write to file:" + sheet)
+	}
+	err = file.Close()
+	if err != nil {
+		return errors.New("Cannot Close to file:" + sheet)
+	}
+	return nil
 }
