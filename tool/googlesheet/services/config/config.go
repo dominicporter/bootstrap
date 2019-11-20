@@ -1,8 +1,10 @@
 package config
 
 import (
-	"github.com/spf13/viper"
+	"fmt"
 	"time"
+
+	"github.com/spf13/viper"
 )
 
 var (
@@ -50,7 +52,7 @@ var (
 
 // Settings consists of all the application configuration
 type Settings struct {
-	GoogleSheet Config
+	GoogleSheet map[string]Config
 }
 type Config struct {
 	ID  string
@@ -59,23 +61,27 @@ type Config struct {
 }
 
 // New creates an instance of the application's configuration
-func New() (*Settings, error) {
+func New(option string) (*Settings, error) {
 	v := viper.New()
 
-	v.SetConfigName("config")
+	v.SetConfigName(option + "config")
 	v.SetConfigType("yml")
-	v.AddConfigPath(".")
+	v.AddConfigPath("./config/")
 
 	err := v.ReadInConfig()
 	if err != nil {
 		return nil, err
 	}
+	configs := make(map[string]Config)
+	for item := range v.AllSettings() {
+		data := v.GetStringMap(item)
+		configs[item] = Config{
+			ID:  fmt.Sprintf("%v", data["id"]),
+			URL: fmt.Sprintf("%v", data["url"]),
+			CSV: fmt.Sprintf("%v", data["csv"])}
 
+	}
 	return &Settings{
-		GoogleSheet: Config{
-			ID:  v.GetString("GOOGLE_SHEET.ID"),
-			URL: v.GetString("GOOGLE_SHEET.URL"),
-			CSV: v.GetString("GOOGLE_SHEET.CSV"),
-		},
-	}, nil
+			GoogleSheet: configs},
+		nil
 }
