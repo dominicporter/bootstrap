@@ -1,9 +1,9 @@
-# https://github.com/mtpereira/parede
+# https://github.com/gnormal/gnorm
 # uses mage
 # uses CI
 
-LIB_NAME=parede
-LIB=github.com/mtpereira/$(LIB_NAME)
+LIB_NAME=gnorm
+LIB=github.com/gnormal/$(LIB_NAME)
 LIB_BRANCH=master
 LIB_FSPATH=$(GOPATH)/src/$(LIB)
 
@@ -27,7 +27,7 @@ print: ## print
 	@echo LIB_BIN_FSPATH: $(LIB_BIN_FSPATH)
 	@echo
 
-git-clone:
+git-clone: ## git-clone
 	mkdir -p $(LIB_FSPATH)
 	cd $(LIB_FSPATH) && cd .. && rm -rf $(LIB_NAME) && git clone ssh://git@$(LIB).git
 	cd $(LIB_FSPATH) && git checkout $(LIB_BRANCH)
@@ -42,27 +42,54 @@ code:
 all: build
 
 dep-os: ## dep-os
-	## assumes hugo installed from tools folder into GO BIN
-	hugo -v
-	## assumes mage installed from tools folder into GO BIN
-	mage -v
 
+	# Later these will be installed for you by the higher level mage script.
+	# CI can then call then and so do the dep-os at the CI level
+
+	## assumes hugo installed from tools folder into GO BIN
+	which hugo
+	## assumes mage installed from tools folder into GO BIN
+	which mage
+
+	
+
+
+### build
 
 build:
-	cd $(LIB_FSPATH) && mage -compile $(PWD)/bin/$(LIB_BIN_NAME)
-run:
+	#cd $(LIB_FSPATH) && mage -compile $(PWD)/bin/$(LIB_BIN_NAME)
+	#go get -u github.com/golang/dep/cmd/dep
+	cd $(LIB_FSPATH) && dep ensure
+	cd $(LIB_FSPATH) && mage build
+build-run:
 	./bin/$(LIB_BIN_NAME)
+
+
+
+### mage based ( used by dev that has mage )
 	
-mage-init:
+mage-help:
+	cd $(LIB_FSPATH) && mage -help
+
+mage-list:
+	cd $(LIB_FSPATH) && mage
+	
+mage-content:
+	cd $(LIB_FSPATH) && mage content
+
+
+
+### go based ( used by CI, that does not have mage )
+go-init:
 	cp main.go $(LIB_FSPATH)
 	cd $(LIB_FSPATH) && go mod init
-mage-list:
+go-list:
 	cd $(LIB_FSPATH) && go run main.go
-mage-content:
+go-content:
 	cd $(LIB_FSPATH) && go run main.go content
-mage-preview:
+go-preview:
 	cd $(LIB_FSPATH) && go run main.go preview
-mage-publish:
+go-publish:
 	cd $(LIB_FSPATH) && go run main.go publish
 
 
