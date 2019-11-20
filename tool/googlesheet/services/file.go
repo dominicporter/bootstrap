@@ -12,6 +12,8 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+
+	"github.com/tidwall/pretty"
 )
 
 func GetAbsoluteFilePath(relFilePath string, sheet string) (result string, err error) {
@@ -121,7 +123,9 @@ func WriteLanguageFiles(csvFilePath string, jsonDirPath string, sheet string) er
 		}
 		encodedJSON, _ := json.Marshal(mapLn)
 		// log.Println(string(encodedJSON))
-		_, err = file.Write(encodedJSON)
+
+
+		_, err = file.Write(FormatJSON(encodedJSON))
 		if err != nil {
 			return errors.New("Cannot write to file:" + lang)
 		}
@@ -180,7 +184,7 @@ func isError(err error) bool {
 	return err != nil
 }
 
-// WriteLanguageFiles exported
+// WriteDataDumpFiles exported
 func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) error {
 	csvFile, err := os.Open(csvFilePath)
 	if err != nil {
@@ -225,7 +229,8 @@ func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) er
 		return errors.New("Cannot truncate file:" + sheet)
 	}
 	encodedJSON, _ := json.Marshal(data)
-	_, err = file.Write(encodedJSON)
+	
+	_, err = file.Write(FormatJSON(encodedJSON))
 	if err != nil {
 		return errors.New("Cannot write to file:" + sheet)
 	}
@@ -234,4 +239,10 @@ func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) er
 		return errors.New("Cannot Close to file:" + sheet)
 	}
 	return nil
+}
+
+// FormatJSON formats the JSON to be tidy and readable
+func FormatJSON(json []byte) (result []byte) {
+	result = pretty.Pretty(json)
+	return result
 }

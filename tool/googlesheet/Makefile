@@ -82,9 +82,13 @@ gsheet-open: ## gsheet-open
 local-build: ## local-build
 	go build -o ./bin/googlesheet .
 
-local-run: ## local-run
-	rm -rf ./outputs
-	go run main.go help
+local-run-datadump: ## local-run-datadump
+	#rm -rf ./outputs
+	go run main.go -option=datadump
+
+local-run-langdump: ## local-run-langdump
+	#rm -rf ./outputs
+	go run main.go -option=lang
 	
 
 

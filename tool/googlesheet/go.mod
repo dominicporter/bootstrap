@@ -27,6 +27,7 @@ require (
 	github.com/robfig/cron v1.2.0 // indirect
 	github.com/spf13/cobra v0.0.5
 	github.com/spf13/viper v1.5.0
+	github.com/tidwall/pretty v1.0.0
 	github.com/uber/jaeger-lib v2.2.0+incompatible
 	github.com/volatiletech/inflect v0.0.0-20170731032912-e7201282ae8d // indirect
 	github.com/volatiletech/null v8.0.0+incompatible // indirect
