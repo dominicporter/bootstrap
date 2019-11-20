@@ -3,10 +3,13 @@ package services
 import (
 	"encoding/csv"
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"io/ioutil"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
 	"time"
@@ -31,12 +34,12 @@ func GetAbsoluteFilePath(relFilePath string, sheet string) (result string, err e
 //var ErrPermission = errors.New("permission denied")
 
 // Download exported
-func Download(url string, filename string, timeout int64, sheet string) (err error) {
+func Download(url string, filename string, timeout int64, sheet string, checkCSV bool) (err error) {
 
 	// show line numbers
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	log.Println(sheet, " : ", "Downloading", url, "...")
+	//log.Println(sheet, " : ", "Downloading", url, "...")
 	client := http.Client{
 		Timeout: time.Duration(timeout * int64(time.Second)),
 	}
@@ -50,11 +53,12 @@ func Download(url string, filename string, timeout int64, sheet string) (err err
 		log.Printf("%v : Response from the URL was %d, but expecting 200", sheet, resp.StatusCode)
 		return errors.New("Response returned with a status different from 200")
 	}
-	if resp.Header["Content-Type"][0] != "text/csv" && resp.Header["Content-Type"][0] != "text/csv; charset=utf-8" {
-		log.Printf(sheet, " : ", "The file downloaded has content type '%s', expected 'text/csv'.", resp.Header["Content-Type"])
-		return errors.New("Downloaded file didn't contain the expected content-type: 'text/csv'")
+	if checkCSV {
+		if resp.Header["Content-Type"][0] != "text/csv" && resp.Header["Content-Type"][0] != "text/csv; charset=utf-8" {
+			log.Printf(sheet, " : ", "The file downloaded has content type '%s', expected 'text/csv'.", resp.Header["Content-Type"])
+			return errors.New("Downloaded file didn't contain the expected content-type: 'text/csv'")
+		}
 	}
-
 	b, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(sheet, " : ", "Cannot read Body of Response", err)
@@ -124,7 +128,6 @@ func WriteLanguageFiles(csvFilePath string, jsonDirPath string, sheet string) er
 		encodedJSON, _ := json.Marshal(mapLn)
 		// log.Println(string(encodedJSON))
 
-
 		_, err = file.Write(FormatJSON(encodedJSON))
 		if err != nil {
 			return errors.New("Cannot write to file:" + lang)
@@ -153,7 +156,7 @@ func createFile(path string) {
 		defer file.Close()
 	}
 
-	log.Println("==> done creating file", path)
+	//log.Println("==> done creating file", path)
 }
 
 /*func createDirectory(dirName string) bool {
@@ -203,7 +206,30 @@ func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) er
 	for rowIndex, row := range csvFileContent[1:][0:] {
 		data = append(data, map[string]string{})
 		for columnIndex, key := range keys {
-			data[rowIndex][key] = row[columnIndex]
+			if strings.Contains(key, "_url") && strings.TrimSpace(row[columnIndex]) != "" {
+				u, err := url.Parse(row[columnIndex])
+				if err != nil {
+					data[rowIndex][key] = "error downloading"
+					panic(err)
+				} else {
+					m, _ := url.ParseQuery(u.RawQuery)
+					if m.Get("id") != "" {
+						link := fmt.Sprintf("https://drive.google.com/uc?authuser=0&id=%v&export=download", m["id"][0])
+						AbsFilePath, err := GetAbsoluteFilePath("./outputs/datadump/json/"+sheet+"/"+m["id"][0]+".png", sheet)
+						err = Download(link, AbsFilePath, 5000, sheet, false)
+						if err != nil {
+							log.Println(sheet, " : ", err)
+							data[rowIndex][key] = "error downloading"
+						} else {
+							data[rowIndex][key] = "assets/mockData/" + sheet + "/" + m["id"][0] + ".png"
+						}
+					}
+				}
+
+			} else {
+				data[rowIndex][key] = row[columnIndex]
+			}
+
 		}
 	}
 	FileName := sheet + ".json"
@@ -229,7 +255,7 @@ func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) er
 		return errors.New("Cannot truncate file:" + sheet)
 	}
 	encodedJSON, _ := json.Marshal(data)
-	
+
 	_, err = file.Write(FormatJSON(encodedJSON))
 	if err != nil {
 		return errors.New("Cannot write to file:" + sheet)

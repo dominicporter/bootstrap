@@ -43,7 +43,7 @@ func processConfig(option string) {
 			csvRelFilePath := "./outputs/" + option + "/" + sheet + ".csv"
 			csvAbsFilePath, err := Services.GetAbsoluteFilePath(csvRelFilePath, sheet)
 
-			err = Services.Download(gsheetURL, csvAbsFilePath, 5000, sheet)
+			err = Services.Download(gsheetURL, csvAbsFilePath, 5000, sheet, true)
 			if err != nil {
 				log.Println(sheet, " : ", err)
 				wg.Done()
