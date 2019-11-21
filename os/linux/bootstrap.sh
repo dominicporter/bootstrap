@@ -24,8 +24,7 @@ rm -f ${GOLANG_FILE}
 # protoc
 PROTOC_VERSION=3.10.1
 curl https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VERSION}/protoc-${PROTOC_VERSION}-linux-x86_64.zip -L -o protoc-${PROTOC_VERSION}-linux-x86_64.zip
-unzip -o protoc-${PROTOC_VERSION}-linux-x86_64.zip -d /usr/local/
-# unzip -o protoc-${PROTOC_VERSION}-linux-x86_64.zip -d /usr/local/ 'include/*'
+unzip -o protoc-${PROTOC_VERSION}-linux-x86_64.zip -d $GOPATH
 rm -f ${PROTOC_FILE}
 
 
