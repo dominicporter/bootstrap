@@ -4,7 +4,7 @@
 # Installed using: "sudo apt-get install go""
 
 export GO111MODULE=on
-export GOROOT=/usr/local/go/
+export GOROOT=/usr/local/go
 export GOPATH=$HOME/go
 
 export PATH=$PATH:$GOROOT/bin
