@@ -1,8 +1,6 @@
 # upgrade
 apt-get upgrade
 
-# Stuff i need
-
 # curl
 apt-get install curl
 
@@ -27,26 +25,14 @@ curl https://github.com/protocolbuffers/protobuf/releases/download/v${PROTOC_VER
 unzip -o protoc-${PROTOC_VERSION}-linux-x86_64.zip -d $GOPATH
 rm -f ${PROTOC_FILE}
 
-
 # gcc
 apt-get install gcc
 
-
-# flutter IOS stuff
-# brew install --HEAD libimobiledevice
-# brew install ideviceinstaller ios-deploy cocoapods
-# pod setup
-
-# sometimes needed
-# brew upgrade cocoapods
-
 # flutter
 # needs a fw other things first
-# brew cask install adoptopenjdk
-# brew cask install android-studio
+apt-get install openjdk-8-jdk
+snap install android-studio
 
-# flutter
-# best to install via git clone
-# mkdir $(HOME)/workspace
-# cd $(HOME)/workspace && git clone -b master https://github.com/flutter/flutter.git
-# ./flutter/bin/flutter --version
+# Flutter github
+git clone -b master https://github.com/flutter/flutter.git
+./flutter/bin/flutter --version
