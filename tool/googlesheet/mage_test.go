@@ -10,3 +10,11 @@ func TestPrint(t *testing.T) {
 	}*/
 
 }
+func TestTest(t *testing.T) {
+	Test()
+	/*if err!=nil{
+		t.Error(err)
+		t.Fail()
+	}*/
+
+}
