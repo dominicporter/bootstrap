@@ -12,4 +12,9 @@ https://github.com/TheThingsIndustries/magepkg
 - git stuff
 
 
+https://github.com/bitfield/script
+https://github.com/posener/script
+- this has all the things we need to make it easy.
+
+
 
