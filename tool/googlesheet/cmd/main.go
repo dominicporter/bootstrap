@@ -33,6 +33,7 @@ func processConfig(option string) {
 		log.Println("No conf file founded ", option)
 		return
 	}
+
 	//fmt.Printf("%+v", Setting)
 	log.Println("Starting Extracting Language Files from GoogleSheet - downloading csv approach..")
 	var wg sync.WaitGroup

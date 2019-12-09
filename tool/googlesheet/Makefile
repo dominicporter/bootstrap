@@ -25,6 +25,11 @@ print: ## print
 	@echo
 
 	@echo
+	@echo LIB_BIN_NAME: $(LIB_BIN_NAME)
+	@echo LIB_BIN_FSPATH: $(LIB_BIN_FSPATH)
+	@echo
+
+	@echo
 	@echo SAMPLE_NAME: $(SAMPLE_NAME)
 	@echo SAMPLE_FSPATH: $(SAMPLE_FSPATH)
 	@echo
@@ -52,6 +57,8 @@ dep:
 
 test:
 	go test -v ./...
+
+	
 ### cloud
 
 cloud-auth:
@@ -78,17 +85,26 @@ gsheet-open: ## gsheet-open
 	open $(GOOGLE_SHEET_URL)
 	open $(GOOGLE_SHEET_CSV)
 
-### local
-local-build: ## local-build
-	go build -o ./bin/googlesheet .
+### build
+build: ## build
+	cd $(SAMPLE_FSPATH)/cmd && go build -o $(LIB_BIN_FSPATH) .
 
-local-run-datadump: ## local-run-datadump
-	#rm -rf ./outputs
-	go run main.go -option=datadump
+build-clean:
+	# go stuff
+	go clean -cache
+	go clean -modcache
+	go clean -testcache
 
-local-run-langdump: ## local-run-langdump
+	# binary in the GO BIN path
+	rm $(LIB_BIN_FSPATH)
+	
+run-datadump: ## run-datadump
 	#rm -rf ./outputs
-	go run main.go -option=lang
+	$(LIB_BIN_FSPATH) -option=datadump
+
+run-langdump: ## run-langdump
+	#rm -rf ./outputs
+	cd $(SAMPLE_FSPATH)/cmd && go run main.go -option=lang
 	
 
 

@@ -54,6 +54,8 @@ var (
 type Settings struct {
 	GoogleSheet map[string]Config
 }
+
+// Config struct
 type Config struct {
 	ID  string
 	URL string
@@ -72,6 +74,9 @@ func New(option string) (*Settings, error) {
 	if err != nil {
 		return nil, err
 	}
+
+
+
 	configs := make(map[string]Config)
 	for item := range v.AllSettings() {
 		data := v.GetStringMap(item)
