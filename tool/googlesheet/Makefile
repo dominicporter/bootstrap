@@ -87,7 +87,7 @@ gsheet-open: ## gsheet-open
 
 ### build
 build: ## build
-	cd $(SAMPLE_FSPATH)/cmd && go build -o $(LIB_BIN_FSPATH) .
+	cd $(SAMPLE_FSPATH) && go build -o $(LIB_BIN_FSPATH) .
 
 build-clean:
 	# go stuff
@@ -97,14 +97,14 @@ build-clean:
 
 	# binary in the GO BIN path
 	rm $(LIB_BIN_FSPATH)
-	
+
 run-datadump: ## run-datadump
 	#rm -rf ./outputs
 	$(LIB_BIN_FSPATH) -option=datadump
 
 run-langdump: ## run-langdump
 	#rm -rf ./outputs
-	cd $(SAMPLE_FSPATH)/cmd && go run main.go -option=lang
+	$(LIB_BIN_FSPATH) -option=lang
 	
 
 

@@ -5,7 +5,7 @@ import (
 	"log"
 	"sync"
 
-	Services "github.com/winwisely99/bootstrap/tool/googlesheet/services"
+	"github.com/winwisely99/bootstrap/tool/googlesheet/services"
 	"github.com/winwisely99/bootstrap/tool/googlesheet/services/config"
 )
 
@@ -42,9 +42,9 @@ func processConfig(option string) {
 		go func(sheet string) {
 			gsheetURL := Setting.GoogleSheet[sheet].CSV
 			csvRelFilePath := "./outputs/" + option + "/" + sheet + ".csv"
-			csvAbsFilePath, err := Services.GetAbsoluteFilePath(csvRelFilePath, sheet)
+			csvAbsFilePath, err := services.GetAbsoluteFilePath(csvRelFilePath, sheet)
 
-			err = Services.Download(gsheetURL, csvAbsFilePath, 5000, sheet, true)
+			err = services.Download(gsheetURL, csvAbsFilePath, 5000, sheet, true)
 			if err != nil {
 				log.Println(sheet, " : ", err)
 				wg.Done()
@@ -52,19 +52,19 @@ func processConfig(option string) {
 			}
 
 			jsonRelDirPath := "./outputs/" + option + "/json/" + sheet + "/"
-			jsonAbsDirPath, err := Services.GetAbsoluteFilePath(jsonRelDirPath, sheet)
+			jsonAbsDirPath, err := services.GetAbsoluteFilePath(jsonRelDirPath, sheet)
 
 			log.Println(sheet, " JSON Output directory: "+jsonAbsDirPath)
 			switch option {
 			case "lang":
-				err = Services.WriteLanguageFiles(csvAbsFilePath, jsonAbsDirPath, sheet)
+				err = services.WriteLanguageFiles(csvAbsFilePath, jsonAbsDirPath, sheet)
 				if err != nil {
 					log.Println(sheet, " : ", err)
 					wg.Done()
 					return
 				}
 			case "datadump":
-				err = Services.WriteDataDumpFiles(csvAbsFilePath, jsonAbsDirPath, sheet)
+				err = services.WriteDataDumpFiles(csvAbsFilePath, jsonAbsDirPath, sheet)
 				if err != nil {
 					log.Println(sheet, " : ", err)
 					wg.Done()
@@ -82,8 +82,4 @@ func processConfig(option string) {
 
 	}
 	wg.Wait()
-}
-
-func processFile() {
-
 }
