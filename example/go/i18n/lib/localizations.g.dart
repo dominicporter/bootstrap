@@ -232,6 +232,50 @@ class AppLocalizations {
         enrollments: "Las inscripciones",
       ),
     ),
+    Locale.fromSubtags(languageCode: "he"): AppLocalizations_Labels(
+      dates: AppLocalizations_Labels_Dates(
+        weekday: AppLocalizations_Labels_Dates_Weekday(
+          monday: "יום שני",
+          tuesday: "יום שלישי",
+          wednesday: "יום רביעי",
+          thursday: "יום חמישי",
+          friday: "יום שישי",
+          saturday: "יום שבת",
+          sunday: "יום ראשון",
+        ),
+        month: AppLocalizations_Labels_Dates_Month(
+          january: "ינואר",
+          february: "פברואר",
+          march: "מרץ",
+          april: "אפריל",
+        ),
+      ),
+      templated: AppLocalizations_Labels_Templated(
+        hello: ({firstName}) => "שלום ${firstName}",
+        contact: (condition, {lastName}) {
+          if (condition == Gender.male) return "מר ${lastName}";
+          if (condition == Gender.female) return "גברת ${lastName}";
+          throw Exception();
+        },
+      ),
+      plurals: AppLocalizations_Labels_Plurals(
+        man: (condition) {
+          if (condition == Plural.zero) return "איש";
+          if (condition == Plural.one) return "איש";
+          if (condition == Plural.multiple) return "גברים";
+          throw Exception();
+        },
+      ),
+      login: AppLocalizations_Labels_Login(
+        signIn: "היכנס",
+        getStarted: "להתחיל",
+      ),
+      home: AppLocalizations_Labels_Home(
+        news: "חדשות",
+        chat: "צ'אטים",
+        enrollments: "הרשמות",
+      ),
+    ),
   };
 
   final AppLocalizations_Labels labels;
