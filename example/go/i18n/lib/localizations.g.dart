@@ -54,6 +54,8 @@ class AppLocalizations {
         news: "News",
         chat: "Chats",
         enrollments: "Enrollments",
+        title: "Title",
+        tltle1: "Data",
       ),
     ),
     Locale.fromSubtags(languageCode: "fr"): AppLocalizations_Labels(
@@ -98,6 +100,8 @@ class AppLocalizations {
         news: "Nouvelles",
         chat: "chats",
         enrollments: "Les inscriptions",
+        title: "Titre",
+        tltle1: "Les données",
       ),
     ),
     Locale.fromSubtags(languageCode: "zh"): AppLocalizations_Labels(
@@ -142,6 +146,8 @@ class AppLocalizations {
         news: "新闻",
         chat: "聊天",
         enrollments: "扩招",
+        title: "标题",
+        tltle1: "数据",
       ),
     ),
     Locale.fromSubtags(languageCode: "de"): AppLocalizations_Labels(
@@ -186,6 +192,8 @@ class AppLocalizations {
         news: "Nachrichten",
         chat: "Chats",
         enrollments: "Einschreibungen",
+        title: "Titel",
+        tltle1: "Daten",
       ),
     ),
     Locale.fromSubtags(languageCode: "es"): AppLocalizations_Labels(
@@ -230,6 +238,8 @@ class AppLocalizations {
         news: "Noticias",
         chat: "chats",
         enrollments: "Las inscripciones",
+        title: "Título",
+        tltle1: "Datos",
       ),
     ),
     Locale.fromSubtags(languageCode: "he"): AppLocalizations_Labels(
@@ -274,6 +284,8 @@ class AppLocalizations {
         news: "חדשות",
         chat: "צ'אטים",
         enrollments: "הרשמות",
+        title: "כותרת",
+        tltle1: "נתונים",
       ),
     ),
   };
@@ -389,13 +401,18 @@ class AppLocalizations_Labels_Login {
 }
 
 class AppLocalizations_Labels_Home {
-  const AppLocalizations_Labels_Home({this.news, this.chat, this.enrollments});
+  const AppLocalizations_Labels_Home(
+      {this.news, this.chat, this.enrollments, this.title, this.tltle1});
 
   final String news;
 
   final String chat;
 
   final String enrollments;
+
+  final String title;
+
+  final String tltle1;
 }
 
 class AppLocalizations_Labels {
