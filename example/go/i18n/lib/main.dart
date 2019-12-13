@@ -12,7 +12,6 @@ import './widget/bottom_nav.dart';
 import './widget/drawer.dart';
 import 'localizations.dart';
 import './data/dummy_data.dart';
-import './textlabel/text_label/lib/text_label.dart';
 
 void main() => runApp(MyApp());
 
