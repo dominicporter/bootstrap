@@ -76,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     //@TextLabel(label: 'test', en: 'en test')
-    final labels = AppLocalizations.of(context); // <- Accessing your labels
+    //final labels = AppLocalizations.of(context); // <- Accessing your labels
     //@TextLabel(label: 'test', en: 'en test')
     return Scaffold(
       appBar: AppBar(
@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ResponsiveListScaffold.builder(
         appBar: AppBar(
-          title: Text(labels.label['home.title']),
+          title: Text(TextLabel(key: 'home.title', en: 'Title').label(context)),
         ),
         bottomNavigationBar: MediaQuery.of(context).size.width >= 720.0
             ? null
@@ -106,8 +106,10 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
         slivers: <Widget>[
           SliverList(
-            delegate: SliverChildListDelegate(
-                <Widget>[Text(labels.label['home.title']), const Divider()]),
+            delegate: SliverChildListDelegate(<Widget>[
+              Text(TextLabel(key: 'test', en: 'Test').label(context)),
+              const Divider()
+            ]),
           ),
         ],
         detailBuilder: (BuildContext context, int index, bool flag) {
