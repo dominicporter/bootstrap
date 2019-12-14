@@ -141,50 +141,53 @@ func WriteLanguageFiles(csvFilePath string, jsonDirPath string, sheet string) er
 		return errors.New("Cannot read file:" + csvFilePath)
 	}
 
+	langFileName := "labels.json"
+
+	langFilePath := filepath.Join(jsonDirPath, langFileName)
+
+	langAbsPath, err := filepath.Abs(langFilePath)
+	if err != nil {
+		log.Println(sheet, " : ", "Cannot get path specified: \""+langAbsPath+"\"", err)
+		return errors.New("Cannot get path specified:" + langFilePath)
+	}
+
+	createFile(langAbsPath)
+
+	file, err := os.OpenFile(langAbsPath, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Println(sheet, " : ", "Cannot open file: \""+langAbsPath+"\"", err)
+		return errors.Wrap(err, sheet+" : "+"Cannot open file: \""+langAbsPath+"\"")
+	}
+
+	//log.Println("langAbsPath: \"" + langAbsPath + "\"")
+	//os.Exit(1)
+
+	err = file.Truncate(0)
+	if err != nil {
+		return errors.New("Cannot truncate file:")
+	}
+	mapFull := map[string]map[string]string{}
 	// walk content for each lang
 	for i, lang := range csvFileContent[0][1:] {
-		langFileName := lang + ".json"
 
-		langFilePath := filepath.Join(jsonDirPath, langFileName)
-
-		langAbsPath, err := filepath.Abs(langFilePath)
-		if err != nil {
-			log.Println(sheet, " : ", "Cannot get path specified: \""+langAbsPath+"\"", err)
-			return errors.New("Cannot get path specified:" + langFilePath)
-		}
-
-		createFile(langAbsPath)
-
-		file, err := os.OpenFile(langAbsPath, os.O_CREATE|os.O_WRONLY, 0644)
-		if err != nil {
-			log.Println(sheet, " : ", "Cannot open file: \""+langAbsPath+"\"", err)
-			return errors.Wrap(err, sheet+" : "+"Cannot open file: \""+langAbsPath+"\"")
-		}
-
-		//log.Println("langAbsPath: \"" + langAbsPath + "\"")
-		//os.Exit(1)
-
-		err = file.Truncate(0)
-		if err != nil {
-			return errors.New("Cannot truncate file:" + lang)
-		}
 		mapLn := map[string]string{}
 		log.Println("Language:", lang, i)
 		for j, row := range csvFileContent[1:] {
 			// fmt.Println(csvFileContent[j+1][0], row[i+1])
 			mapLn[csvFileContent[j+1][0]] = row[i+1]
 		}
-		encodedJSON, _ := json.Marshal(mapLn)
-		// log.Println(string(encodedJSON))
+		mapFull[lang] = mapLn
+	}
+	encodedJSON, _ := json.Marshal(mapFull)
+	// log.Println(string(encodedJSON))
 
-		_, err = file.Write(FormatJSON(encodedJSON))
-		if err != nil {
-			return errors.New("Cannot write to file:" + lang)
-		}
-		err = file.Close()
-		if err != nil {
-			return errors.New("Cannot Close to file:" + lang)
-		}
+	_, err = file.Write(FormatJSON(encodedJSON))
+	if err != nil {
+		return errors.New("Cannot write to file:")
+	}
+	err = file.Close()
+	if err != nil {
+		return errors.New("Cannot Close to file:")
 	}
 	return nil
 }

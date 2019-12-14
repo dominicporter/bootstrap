@@ -12,17 +12,17 @@ class BottomNav extends StatelessWidget {
       items: <BottomNavigationBarItem>[
         buildWidget(
           icon: Icons.home,
-          title: labels.home.news,
+          title: labels.label['home.news'],
           context: context,
         ),
         buildWidget(
           icon: Icons.chat_bubble,
-          title: labels.home.chat,
+          title: labels.label['home.chat'],
           context: context,
         ),
         buildWidget(
           icon: Icons.event_note,
-          title: labels.home.enrollments,
+          title: labels.label['home.enrollments'],
           context: context,
         ),
       ],

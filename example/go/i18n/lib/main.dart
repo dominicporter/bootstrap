@@ -97,7 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ResponsiveListScaffold.builder(
         appBar: AppBar(
-          title: Text(labels.home.tltle1),
+          title: Text(labels.label['home.title']),
         ),
         bottomNavigationBar: MediaQuery.of(context).size.width >= 720.0
             ? null
@@ -107,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
         slivers: <Widget>[
           SliverList(
             delegate: SliverChildListDelegate(
-                <Widget>[Text(labels.home.title), const Divider()]),
+                <Widget>[Text(labels.label['home.title']), const Divider()]),
           ),
         ],
         detailBuilder: (BuildContext context, int index, bool flag) {
