@@ -2,6 +2,7 @@ package util
 
 import (
 	"bytes"
+	"github.com/fatih/color"
 	"github.com/magefile/mage/mg"
 	"os/exec"
 )
@@ -32,58 +33,46 @@ func (p *PowerShell) Execute(args ...string) (stdOut string, stdErr string, err 
 	stdOut, stdErr = stdout.String(), stderr.String()
 	return
 }
-func (Windows) InstallDependency() (err error) {
+func (Windows) InstallDependency() {
+	var err error
 	posh := New()
 	//	var stdout,stderr string
 	_, _, err = posh.Execute("Set-ExecutionPolicy RemoteSigned -scope CurrentUser")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("Invoke-Expression (New-Object System.Net.WebClient).DownloadString('https://get.scoop.sh')")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop update")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop install aria2")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop bucket add extras")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop install git")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop install which")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop install make")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop install vscode")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop install protobuf")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop install gcc")
-	if err != nil {
-		return
-	}
+	color.Red(err.Error())
+
 	_, _, err = posh.Execute("scoop install flutter")
-	if err != nil {
-		return
-	}
-	return
+	color.Red(err.Error())
+
 }
 
 //https://stackoverflow.com/questions/50809752/golang-invoking-powershell-exe-always-returns-ascii-characters

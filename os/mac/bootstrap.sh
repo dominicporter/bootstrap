@@ -29,8 +29,7 @@ brew cask install visual-studio-code
 brew install go
 
 # protoc
-scoop install protobuf
-
+brew install protobuf
 
 # glfw
 # Do we need it ?
