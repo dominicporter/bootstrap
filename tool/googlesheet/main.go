@@ -12,7 +12,7 @@ import (
 func main() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	// process lang by default
-	option := flag.String("option", "lang", "a string")
+	option := flag.String("option", "hugo", "a string")
 	flag.Parse()
 	switch *option {
 	case "lang":
@@ -20,8 +20,7 @@ func main() {
 	case "datadump":
 		processConfig(*option)
 	case "hugo":
-		//processConfig(*option)
-		log.Println("Invalid Option")
+		processConfig(*option)
 	default:
 		log.Println("Invalid Option ", *option)
 	}
@@ -71,8 +70,14 @@ func processConfig(option string) {
 					return
 				}
 			case "hugo":
-				//processConfig(*option)
-				log.Println("Invalid Option ", option)
+				tomlRelDirPath := "./outputs/" + option + "/i18n/" + "/"
+
+				err = services.WriteHugoFiles(csvAbsFilePath, tomlRelDirPath, sheet)
+				if err != nil {
+					log.Println(sheet, " : ", err)
+					wg.Done()
+					return
+				}
 			default:
 				log.Println("Invalid Option ", option)
 			}
