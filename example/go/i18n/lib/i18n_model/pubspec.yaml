@@ -1,0 +1,6 @@
+name: i18n_model
+description: Annotations for the i18n_gen package.
+version: 1.0.0
+
+environment:
+  sdk: ">=2.5.0 <3.0.0"

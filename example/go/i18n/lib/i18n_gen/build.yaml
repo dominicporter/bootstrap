@@ -1,0 +1,15 @@
+targets:
+  $default:
+    builders:
+      i18n_gen|i18n_model:
+        enabled: true
+
+builders:
+  i18n_model:
+    target: ":i18n_gen"
+    import: "package:i18n_gen/builder.dart"
+    builder_factories: ["i18nGen"]
+    build_extensions: { ".csv": [".i18n_labels"] }
+    auto_apply: dependents
+    build_to: cache
+    applies_builders: ["source_gen|combining_builder"]
