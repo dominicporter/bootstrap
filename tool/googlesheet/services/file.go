@@ -19,6 +19,12 @@ import (
 	"github.com/tidwall/pretty"
 )
 
+// Hugo struct
+type Hugo struct {
+	Key    string
+	Values [][]string
+}
+
 // do not edit this mapping
 var mimeMap = map[string]string{
 	"video/3gpp":         "3gp",
@@ -303,4 +309,101 @@ func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) er
 func FormatJSON(json []byte) (result []byte) {
 	result = pretty.Pretty(json)
 	return result
+}
+
+// WriteHugoFiles exported
+func WriteHugoFiles(csvFilePath, tomlDirPath, sheet string) error {
+
+	csvFile, err := os.Open(csvFilePath)
+	if err != nil {
+		log.Println(sheet, " : ", "Cannot open file:"+csvFilePath, err)
+		return errors.Wrap(err, "Cannot open file:"+csvFilePath)
+
+	}
+
+	// get csv file content
+	csvFileContent, err := csv.NewReader(csvFile).ReadAll()
+
+	if err != nil {
+		return errors.New("Cannot read file:" + csvFilePath)
+	}
+
+	// createFile(tomlDirPath)
+	if _, err := os.Stat(tomlDirPath); os.IsNotExist(err) {
+		err := os.Mkdir(tomlDirPath, 0777)
+		if err != nil {
+			fmt.Println("Cannot create directory:", err)
+			return err
+		}
+	}
+
+	for index, lang := range csvFileContent[0][1:] {
+
+		index++
+		outFilePath := tomlDirPath + lang + ".toml"
+
+		file, err := os.OpenFile(outFilePath, os.O_RDWR|os.O_CREATE, 0777)
+		defer file.Close()
+
+		if err != nil {
+			log.Println("Error file:"+outFilePath, err)
+			return err
+		}
+
+		hugoFormat := ""
+		cache := make(map[string]int)
+		langHugo := []Hugo{}
+
+		for _, row := range csvFileContent[1:] {
+
+			h := Hugo{}
+
+			// Check if row contains hugo multi values
+			if strings.Contains(row[0], "(") {
+
+				sp := strings.Split(row[0], "(")
+				tr := strings.TrimRight(sp[1], ")")
+				sp2 := strings.Split(tr, ".")
+
+				// if there is already a hugo object with the same key in cache
+				// so get index from cache and append to to values array
+				if i, ok := cache[sp[0]]; ok {
+					val := []string{sp2[1], row[index]}
+					langHugo[i].Values = append(langHugo[i].Values, val)
+					continue
+				}
+
+				h = Hugo{Key: sp[0], Values: [][]string{{sp2[1], row[index]}}}
+
+			} else {
+				h = Hugo{Key: row[0], Values: [][]string{{"other", row[index]}}}
+			}
+
+			langHugo = append(langHugo, h)
+			cache[h.Key] = len(langHugo) - 1
+		}
+
+		// populate hugo object
+		for _, item := range langHugo {
+			hugoFormat += "[" + item.Key + "]\n"
+			for _, val := range item.Values {
+				hugoFormat += val[0] + " = \"" + val[1] + "\"\n"
+			}
+			hugoFormat += "\n"
+		}
+
+		// write to lang file
+		err = file.Truncate(0)
+
+		if err != nil {
+			return errors.New("Cannot truncate file:" + sheet)
+		}
+
+		_, err = file.Write([]byte(hugoFormat))
+
+		if err != nil {
+			return errors.New("Cannot write to file:" + sheet)
+		}
+	}
+	return nil
 }
