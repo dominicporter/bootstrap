@@ -31,8 +31,6 @@ dependencies:
     path: "./lib/flutter_sheet_localization"
   i18n_model:
     path: "./lib/i18n_model"
-  todo_reporter:
-    path: ./lib/todo_reporter/
 
 dev_dependencies:
   flutter_test:
@@ -42,8 +40,7 @@ dev_dependencies:
     path: "./lib/flutter_sheet_localization_generator"
   i18n_gen:
     path: "./lib/i18n_gen"
-  todo_reporter_generator:
-    path: ./lib/todo_reporter_generator/
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
