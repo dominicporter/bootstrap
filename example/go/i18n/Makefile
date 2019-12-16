@@ -104,6 +104,7 @@ flu-update:
 	$(MAKE) gen-icons
 	$(MAKE) gen-hive
 	$(MAKE) gen-proto
+	$(MAKE) gen-i18n
 	cd $(SAMPLE_FSPATH) && flutter analyze 
 
 gen-icons:
@@ -121,6 +122,9 @@ gen-icons:
 gen-hive:
 	cd $(SAMPLE_FSPATH) && flutter packages pub run build_runner clean
 	cd $(SAMPLE_FSPATH) && flutter packages pub run build_runner build --delete-conflicting-outputs
+gen-i18n:
+	# calls google and pulls the data using the golang tool, etc etc
+	# does the dat i18n code gen.....
 gen-proto:
 	pub global activate protoc_plugin
 	mkdir -p $(SAMPLE_FSPATH)/lib/api/v1/google/protobuf
