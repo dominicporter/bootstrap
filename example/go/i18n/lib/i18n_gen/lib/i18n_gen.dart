@@ -3,7 +3,7 @@ import 'dart:convert';
 
 import 'package:analyzer/dart/element/element.dart';
 import 'dart:io';
-import 'package:i18n/i18n_model/lib/i18n.dart';
+import 'package:i18n_model/i18n.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:build/build.dart';
 

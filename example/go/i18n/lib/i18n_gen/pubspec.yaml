@@ -15,7 +15,7 @@ dependencies:
   analyzer: ^0.38.4
   collection: ^1.14.11
   i18n_model:
-    path: "../i18n_model/"
+    path: "../../lib/i18n_model"
 
 dev_dependencies:
   build_test: ^0.10.3

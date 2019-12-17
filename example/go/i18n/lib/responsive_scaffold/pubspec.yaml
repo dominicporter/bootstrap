@@ -1,0 +1,17 @@
+name: responsive_scaffold
+description: On mobile it shows a list and pushes to details and on tablet it shows the List and the selected item.
+version: 1.1.1
+
+environment:
+  sdk: ">=2.2.2 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  scroll_to_index: ^1.0.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
