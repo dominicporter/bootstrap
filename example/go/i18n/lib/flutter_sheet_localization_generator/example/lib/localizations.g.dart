@@ -11,185 +11,225 @@ class AppLocalizations {
 
   final Locale locale;
 
-  static final Map<Locale, Label> languages = {
-    Locale.fromSubtags(languageCode: "de"): Label(
-      <String, String>{
-        "dates.month.april": "April",
-        "dates.month.february": "Februar",
-        "dates.month.january": "Januar",
-        "dates.month.march": "März",
-        "dates.weekday.friday": "Freitag",
-        "dates.weekday.monday": "Montag",
-        "dates.weekday.saturday": "Samstag",
-        "dates.weekday.sunday": "Sonntag",
-        "dates.weekday.thursday": "Donnerstag",
-        "dates.weekday.tuesday": "Dienstag",
-        "dates.weekday.wednesday": "Mittwoch",
-        "home.chat": "Chats",
-        "home.enrollments": "Einschreibungen",
-        "home.news": "Nachrichten",
-        "home.title": "Titel",
-        "home.tltle1": "Daten",
-        "login.getStarted": "Loslegen",
-        "login.signIn": "Anmelden",
-        "plurals.man(Plural.multiple)": "Männer",
-        "plurals.man(Plural.one)": "Mann",
-        "plurals.man(Plural.zero)": "Mann",
-        "templated.contact(Gender.female)": "Frau {{last_name}}",
-        "templated.contact(Gender.male)": "Herr {{last_name}}",
-        "templated.hello": "Hallo {{first_name}}",
-      },
+  static final Map<Locale, AppLocalizations_Labels> languages = {
+    Locale.fromSubtags(languageCode: "fr"): AppLocalizations_Labels(
+      dates: AppLocalizations_Labels_Dates(
+        weekday: AppLocalizations_Labels_Dates_Weekday(
+          monday: "lundi",
+          tuesday: "mardia",
+          wednesday: "mercredi",
+          thursday: "jeudi",
+          friday: "vendredi",
+          saturday: "samedi",
+          sunday: "dimanche",
+        ),
+        month: AppLocalizations_Labels_Dates_Month(
+          january: "janvier",
+          february: "février",
+          march: "mars",
+          april: "avril",
+        ),
+      ),
+      templated: AppLocalizations_Labels_Templated(
+        hello: ({firstName}) => "Bonjour ${firstName}!",
+        contact: (condition, {lastName}) {
+          if (condition == Gender.male) return "M. ${lastName}";
+          if (condition == Gender.female) return "Mme ${lastName}";
+          throw Exception();
+        },
+      ),
+      plurals: AppLocalizations_Labels_Plurals(
+        man: (condition) {
+          if (condition == Plural.zero) return "hommes";
+          if (condition == Plural.one) return "homme";
+          if (condition == Plural.multiple) return "hommes";
+          throw Exception();
+        },
+      ),
     ),
-    Locale.fromSubtags(languageCode: "en"): Label(
-      <String, String>{
-        "dates.month.april": "April",
-        "dates.month.february": "February",
-        "dates.month.january": "January",
-        "dates.month.march": "March",
-        "dates.weekday.friday": "Friday",
-        "dates.weekday.monday": "Monday",
-        "dates.weekday.saturday": "Saturday",
-        "dates.weekday.sunday": "Sunday",
-        "dates.weekday.thursday": "Thursday",
-        "dates.weekday.tuesday": "Tuesday",
-        "dates.weekday.wednesday": "Wednesday",
-        "home.chat": "Chats",
-        "home.enrollments": "Enrollments",
-        "home.news": "News",
-        "home.title": "Title",
-        "home.tltle1": "Data",
-        "login.getStarted": "Get Started",
-        "login.signIn": "Sign In",
-        "plurals.man(Plural.multiple)": "men",
-        "plurals.man(Plural.one)": "man",
-        "plurals.man(Plural.zero)": "man",
-        "templated.contact(Gender.female)": "Mrs {{last_name}}",
-        "templated.contact(Gender.male)": "Mr {{last_name}}",
-        "templated.hello": "Hello {{first_name}}",
-      },
+    Locale.fromSubtags(languageCode: "en"): AppLocalizations_Labels(
+      dates: AppLocalizations_Labels_Dates(
+        weekday: AppLocalizations_Labels_Dates_Weekday(
+          monday: "monday",
+          tuesday: "tuesday",
+          wednesday: "wednesday",
+          thursday: "thursday",
+          friday: "friday",
+          saturday: "saturday",
+          sunday: "sunday",
+        ),
+        month: AppLocalizations_Labels_Dates_Month(
+          january: "january",
+          february: "february",
+          march: "march",
+          april: "april",
+        ),
+      ),
+      templated: AppLocalizations_Labels_Templated(
+        hello: ({firstName}) => "Hello ${firstName}!",
+        contact: (condition, {lastName}) {
+          if (condition == Gender.male) return "Mr ${lastName}!";
+          if (condition == Gender.female) return "Mrs ${lastName}!";
+          throw Exception();
+        },
+      ),
+      plurals: AppLocalizations_Labels_Plurals(
+        man: (condition) {
+          if (condition == Plural.zero) return "man";
+          if (condition == Plural.one) return "man";
+          if (condition == Plural.multiple) return "men";
+          throw Exception();
+        },
+      ),
     ),
-    Locale.fromSubtags(languageCode: "es"): Label(
-      <String, String>{
-        "dates.month.april": "abril",
-        "dates.month.february": "febrero",
-        "dates.month.january": "enero",
-        "dates.month.march": "marzo",
-        "dates.weekday.friday": "viernes",
-        "dates.weekday.monday": "lunes",
-        "dates.weekday.saturday": "sábado",
-        "dates.weekday.sunday": "domingo",
-        "dates.weekday.thursday": "jueves",
-        "dates.weekday.tuesday": "martes",
-        "dates.weekday.wednesday": "miércoles",
-        "home.chat": "chats",
-        "home.enrollments": "Las inscripciones",
-        "home.news": "Noticias",
-        "home.title": "Título",
-        "home.tltle1": "Datos",
-        "login.getStarted": "Empezar",
-        "login.signIn": "Registrarse",
-        "plurals.man(Plural.multiple)": "hombres",
-        "plurals.man(Plural.one)": "hombre",
-        "plurals.man(Plural.zero)": "hombre",
-        "templated.contact(Gender.female)": "Sra {{}} apellidos",
-        "templated.contact(Gender.male)": "Mr {{}} apellidos",
-        "templated.hello": "Hola {{first_name}}",
-      },
-    ),
-    Locale.fromSubtags(languageCode: "fr"): Label(
-      <String, String>{
-        "dates.month.april": "avril",
-        "dates.month.february": "février",
-        "dates.month.january": "janvier",
-        "dates.month.march": "Mars",
-        "dates.weekday.friday": "Vendredi",
-        "dates.weekday.monday": "Lundi",
-        "dates.weekday.saturday": "samedi",
-        "dates.weekday.sunday": "dimanche",
-        "dates.weekday.thursday": "Jeudi",
-        "dates.weekday.tuesday": "Mardi",
-        "dates.weekday.wednesday": "Mercredi",
-        "home.chat": "chats",
-        "home.enrollments": "Les inscriptions",
-        "home.news": "Nouvelles",
-        "home.title": "Titre",
-        "home.tltle1": "Les données",
-        "login.getStarted": "Commencer",
-        "login.signIn": "Se connecter",
-        "plurals.man(Plural.multiple)": "Hommes",
-        "plurals.man(Plural.one)": "homme",
-        "plurals.man(Plural.zero)": "homme",
-        "templated.contact(Gender.female)": "Mme {{last_name}}",
-        "templated.contact(Gender.male)": "M. {{last_name}}",
-        "templated.hello": "Bonjour {{first_name}}",
-      },
-    ),
-    Locale.fromSubtags(languageCode: "he"): Label(
-      <String, String>{
-        "dates.month.april": "אפריל",
-        "dates.month.february": "פברואר",
-        "dates.month.january": "ינואר",
-        "dates.month.march": "מרץ",
-        "dates.weekday.friday": "יום שישי",
-        "dates.weekday.monday": "יום שני",
-        "dates.weekday.saturday": "יום שבת",
-        "dates.weekday.sunday": "יום ראשון",
-        "dates.weekday.thursday": "יום חמישי",
-        "dates.weekday.tuesday": "יום שלישי",
-        "dates.weekday.wednesday": "יום רביעי",
-        "home.chat": "צ'אטים",
-        "home.enrollments": "הרשמות",
-        "home.news": "חדשות",
-        "home.title": "כותרת",
-        "home.tltle1": "נתונים",
-        "login.getStarted": "להתחיל",
-        "login.signIn": "היכנס",
-        "plurals.man(Plural.multiple)": "גברים",
-        "plurals.man(Plural.one)": "איש",
-        "plurals.man(Plural.zero)": "איש",
-        "templated.contact(Gender.female)": "גברת {{last_name}}",
-        "templated.contact(Gender.male)": "מר {{last_name}}",
-        "templated.hello": "שלום {{first_name}}",
-      },
-    ),
-    Locale.fromSubtags(languageCode: "zh"): Label(
-      <String, String>{
-        "dates.month.april": "四月",
-        "dates.month.february": "二月",
-        "dates.month.january": "一月",
-        "dates.month.march": "游行",
-        "dates.weekday.friday": "星期五",
-        "dates.weekday.monday": "星期一",
-        "dates.weekday.saturday": "星期六",
-        "dates.weekday.sunday": "星期日",
-        "dates.weekday.thursday": "星期四",
-        "dates.weekday.tuesday": "星期二",
-        "dates.weekday.wednesday": "星期三",
-        "home.chat": "聊天",
-        "home.enrollments": "扩招",
-        "home.news": "新闻",
-        "home.title": "标题",
-        "home.tltle1": "数据",
-        "login.getStarted": "入门",
-        "login.signIn": "登入",
-        "plurals.man(Plural.multiple)": "男人",
-        "plurals.man(Plural.one)": "男人",
-        "plurals.man(Plural.zero)": "男人",
-        "templated.contact(Gender.female)": "太太{{姓氏}}",
-        "templated.contact(Gender.male)": "先生{{姓氏}}",
-        "templated.hello": "您好{{first_name}}您好",
-      },
+    Locale.fromSubtags(
+        languageCode: "zh",
+        scriptCode: "Hans",
+        countryCode: "CN"): AppLocalizations_Labels(
+      dates: AppLocalizations_Labels_Dates(
+        weekday: AppLocalizations_Labels_Dates_Weekday(
+          monday: "星期一",
+          tuesday: "星期二",
+          wednesday: "星期三",
+          thursday: "星期四",
+          friday: "星期五",
+          saturday: "星期六",
+          sunday: "星期日",
+        ),
+        month: AppLocalizations_Labels_Dates_Month(
+          january: "一月",
+          february: "二月",
+          march: "游行",
+          april: "四月",
+        ),
+      ),
+      templated: AppLocalizations_Labels_Templated(
+        hello: ({firstName}) => "你好${firstName}!",
+        contact: (condition, {lastName}) {
+          if (condition == Gender.male) return "先生${lastName}";
+          if (condition == Gender.female) return "夫人${lastName}";
+          throw Exception();
+        },
+      ),
+      plurals: AppLocalizations_Labels_Plurals(
+        man: (condition) {
+          if (condition == Plural.zero) return "男人";
+          if (condition == Plural.one) return "男人";
+          if (condition == Plural.multiple) return "男人";
+          throw Exception();
+        },
+      ),
     ),
   };
 
-  final Label labels;
+  final AppLocalizations_Labels labels;
 
-  static Label of(BuildContext context) =>
+  static AppLocalizations_Labels of(BuildContext context) =>
       Localizations.of<AppLocalizations>(context, AppLocalizations)?.labels;
 }
 
-class Label {
-  const Label(this.label);
+enum Gender {
+  male,
+  female,
+}
+enum Plural {
+  zero,
+  one,
+  multiple,
+}
 
-  final Map<String, String> label;
+class AppLocalizations_Labels_Dates_Weekday {
+  const AppLocalizations_Labels_Dates_Weekday(
+      {this.monday,
+      this.tuesday,
+      this.wednesday,
+      this.thursday,
+      this.friday,
+      this.saturday,
+      this.sunday});
+
+  final String monday;
+
+  final String tuesday;
+
+  final String wednesday;
+
+  final String thursday;
+
+  final String friday;
+
+  final String saturday;
+
+  final String sunday;
+}
+
+class AppLocalizations_Labels_Dates_Month {
+  const AppLocalizations_Labels_Dates_Month(
+      {this.january, this.february, this.march, this.april});
+
+  final String january;
+
+  final String february;
+
+  final String march;
+
+  final String april;
+}
+
+class AppLocalizations_Labels_Dates {
+  const AppLocalizations_Labels_Dates({this.weekday, this.month});
+
+  final AppLocalizations_Labels_Dates_Weekday weekday;
+
+  final AppLocalizations_Labels_Dates_Month month;
+}
+
+typedef String AppLocalizations_Labels_Templated_hello(
+    {@required String firstName});
+typedef String AppLocalizations_Labels_Templated_contact(Gender condition,
+    {@required String lastName});
+
+class AppLocalizations_Labels_Templated {
+  const AppLocalizations_Labels_Templated(
+      {AppLocalizations_Labels_Templated_hello hello,
+      AppLocalizations_Labels_Templated_contact contact})
+      : this._hello = hello,
+        this._contact = contact;
+
+  final AppLocalizations_Labels_Templated_hello _hello;
+
+  final AppLocalizations_Labels_Templated_contact _contact;
+
+  String hello({@required String firstName}) => this._hello(
+        firstName: firstName,
+      );
+  String contact(Gender condition, {@required String lastName}) =>
+      this._contact(
+        condition,
+        lastName: lastName,
+      );
+}
+
+typedef String AppLocalizations_Labels_Plurals_man(Plural condition);
+
+class AppLocalizations_Labels_Plurals {
+  const AppLocalizations_Labels_Plurals(
+      {AppLocalizations_Labels_Plurals_man man})
+      : this._man = man;
+
+  final AppLocalizations_Labels_Plurals_man _man;
+
+  String man(Plural condition) => this._man(
+        condition,
+      );
+}
+
+class AppLocalizations_Labels {
+  const AppLocalizations_Labels({this.dates, this.templated, this.plurals});
+
+  final AppLocalizations_Labels_Dates dates;
+
+  final AppLocalizations_Labels_Templated templated;
+
+  final AppLocalizations_Labels_Plurals plurals;
 }

@@ -7,23 +7,22 @@ class BottomNav extends StatelessWidget {
   final int index;
   @override
   Widget build(BuildContext context) {
-    // final labels = AppLocalizations.of(context);
+    final AppLocalizations_Labels labels = AppLocalizations.of(context);
     return BottomNavigationBar(
       items: <BottomNavigationBarItem>[
         buildWidget(
           icon: Icons.home,
-          title: TextLabel(key: 'home.news', en: 'News').label(context),
+          title: labels.home.news,
           context: context,
         ),
         buildWidget(
           icon: Icons.chat_bubble,
-          title: TextLabel(key: 'home.chat', en: 'Chat').label(context),
+          title: labels.home.chat,
           context: context,
         ),
         buildWidget(
           icon: Icons.event_note,
-          title: TextLabel(key: 'home.enrollments', en: 'Enrollment')
-              .label(context),
+          title: labels.home.enrollments,
           context: context,
         ),
       ],

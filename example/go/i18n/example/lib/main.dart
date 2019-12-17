@@ -7,7 +7,6 @@ import 'package:flutter/rendering.dart'
         debugDumpSemanticsTree,
         DebugSemanticsDumpOrder;
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:i18n_model/i18n.dart';
 import 'package:responsive_scaffold/responsive_scaffold.dart';
 import './widget/bottom_nav.dart';
 import './widget/drawer.dart';
@@ -74,10 +73,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  @IEighteenn(key: 'test', en: 'en test')
-  @IEighteenn(key: 'test1', en: 'en test1')
   @override
   Widget build(BuildContext context) {
+    final AppLocalizations_Labels labels = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
         title: DropdownButton<Locale>(
@@ -97,7 +95,7 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: ResponsiveListScaffold.builder(
         appBar: AppBar(
-          title: Text(TextLabel(key: 'home.title', en: 'Title').label(context)),
+          title: Text(labels.home.title),
         ),
         bottomNavigationBar: MediaQuery.of(context).size.width >= 720.0
             ? null
@@ -108,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
           SliverList(
             delegate: SliverChildListDelegate(<Widget>[
               // Shows that if a label is not available, it returns the en label
-              Text(TextLabel(key: 'test', en: 'Test').label(context)),
+              Text(labels.home.title),
               const Divider()
             ]),
           ),

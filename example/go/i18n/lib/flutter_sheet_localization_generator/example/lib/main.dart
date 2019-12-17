@@ -81,7 +81,13 @@ class MyHomePage extends StatelessWidget {
           Expanded(
             child: Column(
               children: <Widget>[
-                Text(labels.label['dates.month.february']),
+                Text(labels.dates.month.february),
+                Text(labels.templated.hello(firstName: "World")),
+                Text(labels.templated.contact(Gender.male, lastName: "John")),
+                Text(labels.templated.contact(Gender.female, lastName: "Jane")),
+                Text("0 " + labels.plurals.man(plural(0))),
+                Text("1 " + labels.plurals.man(plural(1))),
+                Text("5 " + labels.plurals.man(plural(5))),
               ],
               // Displaying templated label
             ),
