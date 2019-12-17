@@ -177,7 +177,7 @@ func WriteLanguageFiles(csvFilePath string, jsonDirPath string, sheet string) er
 	for i, lang := range csvFileContent[0][1:] {
 
 		mapLn := map[string]string{}
-		log.Println("Language:", lang, i)
+		log.Println("Language : ", lang, i)
 		for j, row := range csvFileContent[1:] {
 			// fmt.Println(csvFileContent[j+1][0], row[i+1])
 			mapLn[csvFileContent[j+1][0]] = row[i+1]
