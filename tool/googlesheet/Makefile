@@ -106,5 +106,8 @@ run-langdump: ## run-langdump
 	#rm -rf ./outputs
 	$(LIB_BIN_FSPATH) -option=lang
 	
+run-hugo: ## run-langdump
+	#rm -rf ./outputs
+	$(LIB_BIN_FSPATH) -option=hugo
 
 

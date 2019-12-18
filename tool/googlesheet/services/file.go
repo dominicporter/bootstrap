@@ -312,13 +312,12 @@ func FormatJSON(json []byte) (result []byte) {
 }
 
 // WriteHugoFiles exported
-func WriteHugoFiles(csvFilePath, tomlDirPath, sheet string) error {
+func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
 
 	csvFile, err := os.Open(csvFilePath)
 	if err != nil {
 		log.Println(sheet, " : ", "Cannot open file:"+csvFilePath, err)
 		return errors.Wrap(err, "Cannot open file:"+csvFilePath)
-
 	}
 
 	// get csv file content
@@ -328,38 +327,67 @@ func WriteHugoFiles(csvFilePath, tomlDirPath, sheet string) error {
 		return errors.New("Cannot read file:" + csvFilePath)
 	}
 
-	// createFile(tomlDirPath)
-	if _, err := os.Stat(tomlDirPath); os.IsNotExist(err) {
-		err := os.Mkdir(tomlDirPath, 0777)
-		if err != nil {
-			fmt.Println("Cannot create directory:", err)
-			return err
-		}
-	}
+	i18nDir := hugoDirPath + "/i18n/"
+	goldenDir := hugoDirPath + "/golden/content/"
+
+	mkDirIfNotExists(i18nDir)
+	mkDirIfNotExists(goldenDir)
 
 	for index, lang := range csvFileContent[0][1:] {
 
+		if lang == "default_template" {
+			continue
+		}
+
+		hugoFormat := ""
+		langHugo := []Hugo{}
+
 		index++
-		outFilePath := tomlDirPath + lang + ".toml"
+		outFilePath := i18nDir + lang + ".toml"
 
 		file, err := os.OpenFile(outFilePath, os.O_RDWR|os.O_CREATE, 0777)
-		defer file.Close()
 
 		if err != nil {
 			log.Println("Error file:"+outFilePath, err)
 			return err
 		}
 
-		hugoFormat := ""
 		cache := make(map[string]int)
-		langHugo := []Hugo{}
+		h := Hugo{}
 
 		for _, row := range csvFileContent[1:] {
 
-			h := Hugo{}
+			if strings.Split(row[0], ".")[1] == "md" {
 
-			// Check if row contains hugo multi values
+				err = mkDirIfNotExists(goldenDir + lang + "/")
+				if err != nil {
+					return err
+				}
+
+				mdFile, err := os.OpenFile(goldenDir+lang+"/"+row[0], os.O_RDWR|os.O_CREATE, 0700)
+
+				if err != nil {
+					return err
+				}
+
+				// write to lang file
+				err = mdFile.Truncate(0)
+
+				if err != nil {
+					return errors.New("Cannot truncate file:" + sheet)
+				}
+
+				_, err = mdFile.Write([]byte(row[index]))
+
+				if err != nil {
+					return errors.New("Cannot write to file:" + sheet)
+				}
+				mdFile.Close()
+				continue
+			}
+
 			if strings.Contains(row[0], "(") {
+				// Check if row contains hugo multi values
 
 				sp := strings.Split(row[0], "(")
 				tr := strings.TrimRight(sp[1], ")")
@@ -381,6 +409,7 @@ func WriteHugoFiles(csvFilePath, tomlDirPath, sheet string) error {
 
 			langHugo = append(langHugo, h)
 			cache[h.Key] = len(langHugo) - 1
+
 		}
 
 		// populate hugo object
@@ -396,13 +425,26 @@ func WriteHugoFiles(csvFilePath, tomlDirPath, sheet string) error {
 		err = file.Truncate(0)
 
 		if err != nil {
-			return errors.New("Cannot truncate file:" + sheet)
+			return fmt.Errorf("Cannot truncate file: %v", err)
 		}
 
 		_, err = file.Write([]byte(hugoFormat))
 
 		if err != nil {
-			return errors.New("Cannot write to file:" + sheet)
+			return fmt.Errorf("Cannot write to file: %v", err)
+		}
+		file.Close()
+	}
+
+	return nil
+}
+
+func mkDirIfNotExists(path string) error {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err := os.MkdirAll(path, 0777)
+		if err != nil {
+			fmt.Println("Cannot create directory:", err)
+			return err
 		}
 	}
 	return nil
