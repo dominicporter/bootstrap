@@ -70,7 +70,7 @@ func processConfig(option string) {
 					return
 				}
 			case "hugo":
-				tomlRelDirPath := "./outputs/" + option + "/i18n/" + "/"
+				tomlRelDirPath := "./outputs/" + option + "/"
 
 				err = services.WriteHugoFiles(csvAbsFilePath, tomlRelDirPath, sheet)
 				if err != nil {
