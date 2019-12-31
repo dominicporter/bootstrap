@@ -252,23 +252,15 @@ func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) er
 		data = append(data, map[string]string{})
 		for columnIndex, key := range keys {
 			if strings.Contains(key, "_url") && strings.TrimSpace(row[columnIndex]) != "" {
-				u, err := url.Parse(row[columnIndex])
-				if err != nil {
-					data[rowIndex][key] = "error downloading"
-					panic(err)
-				} else {
-					m, _ := url.ParseQuery(u.RawQuery)
-					if m.Get("id") != "" {
-						link := fmt.Sprintf("https://drive.google.com/uc?authuser=0&id=%v&export=download", m["id"][0])
-						AbsFilePath, err := GetAbsoluteFilePath("./outputs/datadump/json/"+sheet+"/"+m["id"][0], sheet)
-						err = Download(link, AbsFilePath, 5000, sheet, false)
-						if err != nil {
-							log.Println(sheet, " : ", err)
-							data[rowIndex][key] = "error downloading"
-						} else {
-							data[rowIndex][key] = "assets/mockData/" + sheet + "/" + m["id"][0] + ".png"
-						}
+				if strings.Contains(row[columnIndex], ",") {
+					var paths []string
+					urls := strings.Split(row[columnIndex], ",")
+					for _, url := range urls {
+						paths = append(paths, downloadURL(strings.TrimSpace(url), sheet))
 					}
+					data[rowIndex][key] = strings.Join(paths, ",")
+				} else {
+					data[rowIndex][key] = downloadURL(strings.TrimSpace(row[columnIndex]), sheet)
 				}
 
 			} else {
@@ -316,6 +308,30 @@ func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) er
 func FormatJSON(json []byte) (result []byte) {
 	result = pretty.Pretty(json)
 	return result
+}
+
+// Download the file in the url
+func downloadURL(cell string, sheet string) string {
+	u, err := url.Parse(cell)
+	if err != nil {
+		return "error downloading"
+		//panic(err)
+	} else {
+		m, _ := url.ParseQuery(u.RawQuery)
+		if m.Get("id") != "" {
+			link := fmt.Sprintf("https://drive.google.com/uc?authuser=0&id=%v&export=download", m["id"][0])
+			AbsFilePath, err := GetAbsoluteFilePath("./outputs/datadump/json/"+sheet+"/"+m["id"][0], sheet)
+			err = Download(link, AbsFilePath, 5000, sheet, false)
+			if err != nil {
+				log.Println(sheet, " : ", err)
+				return "error downloading"
+			} else {
+				return "assets/mockData/" + sheet + "/" + m["id"][0] + ".png"
+			}
+		} else {
+			return "invalid link"
+		}
+	}
 }
 
 // WriteHugoFiles exported
