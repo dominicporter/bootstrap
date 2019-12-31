@@ -21,9 +21,9 @@ import (
 
 var (
 	// tags used when translate
-	tagsToRemove = []string{"NOTRANSLATE_", "] (", "/ "}
+	tagsToRemove = []string{"NOTRANSLATE_", "\"NOTRANSLATE_", "\" NOTRANSLATE_", "] (", "/ "}
 	// tags to replace
-	tagsToReplace = []string{"", "](", "/"}
+	tagsToReplace = []string{"", "", "", "](", "/"}
 )
 
 // Hugo struct
@@ -391,6 +391,7 @@ func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
 
 			h := Hugo{}
 
+			cleanedRow := strings.ReplaceAll(row[index], "NOTRANSLATE_", "")
 			if strings.Contains(row[0], "(") {
 
 				// Check if row contains hugo multi values
@@ -401,15 +402,16 @@ func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
 				// if there is already a hugo object with the same key in cache
 				// so get index from cache and append to to values array
 				if i, ok := cache[cleanKey(sp[0])]; ok {
-					val := []string{sp2[1], row[index]}
+
+					val := []string{sp2[1], cleanedRow}
 					langHugo[i].Values = append(langHugo[i].Values, val)
 					continue
 				}
 
-				h = Hugo{Key: cleanKey(sp[0]), Values: [][]string{{sp2[1], row[index]}}}
+				h = Hugo{Key: cleanKey(sp[0]), Values: [][]string{{sp2[1], cleanedRow}}}
 
 			} else {
-				h = Hugo{Key: cleanKey(row[0]), Values: [][]string{{"other", row[index]}}}
+				h = Hugo{Key: cleanKey(row[0]), Values: [][]string{{"other", cleanedRow}}}
 			}
 
 			langHugo = append(langHugo, h)
