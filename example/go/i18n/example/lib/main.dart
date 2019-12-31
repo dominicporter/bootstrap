@@ -31,32 +31,41 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      showSemanticsDebugger: false,
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(
-        title: 'Flutter Demo Home Page',
-        locale: this._currentLocale,
-        onLocaleChanged: (locale) {
-          print(_currentLocale);
-          print(locale);
-          if (this._currentLocale != locale) {
-            this.setState(() => this._currentLocale = locale);
-          }
+    return ServiceProvider(
+      child: MaterialApp(
+        showSemanticsDebugger: false,
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+
+        locale: _currentLocale,
+        localizationsDelegates: [
+          const AppLocalizationsDelegate(), // <- Your custom delegate
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales:
+            AppLocalizations.languages.keys.toList(), // <- Supported locales
+        onGenerateRoute: (RouteSettings settings) {
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (BuildContext context) {
+              return MyHomePage(
+                title: 'Flutter Demo Home Page',
+                locale: this._currentLocale,
+                onLocaleChanged: (locale) {
+                  if (this._currentLocale != locale) {
+                    this.setState(() => this._currentLocale = locale);
+                  }
+                },
+              );
+            },
+          );
         },
+        initialRoute: '/login',
       ),
-      locale: _currentLocale,
-      localizationsDelegates: [
-        const AppLocalizationsDelegate(), // <- Your custom delegate
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales:
-          AppLocalizations.languages.keys.toList(), // <- Supported locales
     );
   }
 }
@@ -167,9 +176,24 @@ class _MyHomePageState extends State<MyHomePage> {
             leading: Text(i.avatar),
             title: Text(i.title),
             subtitle: Text(i.description),
+            onTap: () {
+              Navigator.of(context)
+                  .pushNamed('/routeName/${DateTime.now().toIso8601String()}');
+            },
           );
         },
       ),
+    );
+  }
+}
+
+class ServiceProvider extends StatelessWidget {
+  const ServiceProvider({Key key, this.child}) : super(key: key);
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: child,
     );
   }
 }
