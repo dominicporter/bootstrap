@@ -19,6 +19,13 @@ import (
 	"github.com/tidwall/pretty"
 )
 
+var (
+	// tags used when translate
+	tagsToRemove = []string{"NOTRANSLATE_", "\"NOTRANSLATE_", "\" NOTRANSLATE_", "] (", "/ "}
+	// tags to replace
+	tagsToReplace = []string{"", "", "", "](", "/"}
+)
+
 // Hugo struct
 type Hugo struct {
 	Key    string
@@ -245,23 +252,15 @@ func WriteDataDumpFiles(csvFilePath string, jsonDirPath string, sheet string) er
 		data = append(data, map[string]string{})
 		for columnIndex, key := range keys {
 			if strings.Contains(key, "_url") && strings.TrimSpace(row[columnIndex]) != "" {
-				u, err := url.Parse(row[columnIndex])
-				if err != nil {
-					data[rowIndex][key] = "error downloading"
-					panic(err)
-				} else {
-					m, _ := url.ParseQuery(u.RawQuery)
-					if m.Get("id") != "" {
-						link := fmt.Sprintf("https://drive.google.com/uc?authuser=0&id=%v&export=download", m["id"][0])
-						AbsFilePath, err := GetAbsoluteFilePath("./outputs/datadump/json/"+sheet+"/"+m["id"][0], sheet)
-						err = Download(link, AbsFilePath, 5000, sheet, false)
-						if err != nil {
-							log.Println(sheet, " : ", err)
-							data[rowIndex][key] = "error downloading"
-						} else {
-							data[rowIndex][key] = "assets/mockData/" + sheet + "/" + m["id"][0] + ".png"
-						}
+				if strings.Contains(row[columnIndex], ",") {
+					var paths []string
+					urls := strings.Split(row[columnIndex], ",")
+					for _, url := range urls {
+						paths = append(paths, downloadURL(strings.TrimSpace(url), sheet))
 					}
+					data[rowIndex][key] = strings.Join(paths, ",")
+				} else {
+					data[rowIndex][key] = downloadURL(strings.TrimSpace(row[columnIndex]), sheet)
 				}
 
 			} else {
@@ -311,10 +310,36 @@ func FormatJSON(json []byte) (result []byte) {
 	return result
 }
 
+// Download the file in the url
+func downloadURL(cell string, sheet string) string {
+	u, err := url.Parse(cell)
+	if err != nil {
+		return "error downloading"
+		//panic(err)
+	} else {
+		m, _ := url.ParseQuery(u.RawQuery)
+		if m.Get("id") != "" {
+			link := fmt.Sprintf("https://drive.google.com/uc?authuser=0&id=%v&export=download", m["id"][0])
+			AbsFilePath, err := GetAbsoluteFilePath("./outputs/datadump/json/"+sheet+"/"+m["id"][0], sheet)
+			err = Download(link, AbsFilePath, 5000, sheet, false)
+			if err != nil {
+				log.Println(sheet, " : ", err)
+				return "error downloading"
+			} else {
+				return "assets/mockData/" + sheet + "/" + m["id"][0] + ".png"
+			}
+		} else {
+			return "invalid link"
+		}
+	}
+}
+
 // WriteHugoFiles exported
 func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
 
+	// open csv file
 	csvFile, err := os.Open(csvFilePath)
+
 	if err != nil {
 		log.Println(sheet, " : ", "Cannot open file:"+csvFilePath, err)
 		return errors.Wrap(err, "Cannot open file:"+csvFilePath)
@@ -327,47 +352,41 @@ func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
 		return errors.New("Cannot read file:" + csvFilePath)
 	}
 
-	i18nDir := hugoDirPath + "/i18n/"
-	goldenDir := hugoDirPath + "/golden/content/"
+	// out dirs content and i18n paths
+	i18nDir := hugoDirPath + "i18n/"
+	contentDir := hugoDirPath + "content/"
 
+	// create dirs
 	mkDirIfNotExists(i18nDir)
-	mkDirIfNotExists(goldenDir)
+	mkDirIfNotExists(contentDir)
 
+	// loop through csv file
 	for index, lang := range csvFileContent[0][1:] {
 
-		if lang == "default_template" {
-			continue
-		}
-
-		hugoFormat := ""
-		langHugo := []Hugo{}
-
 		index++
-		outFilePath := i18nDir + lang + ".toml"
-
-		file, err := os.OpenFile(outFilePath, os.O_RDWR|os.O_CREATE, 0777)
-
-		if err != nil {
-			log.Println("Error file:"+outFilePath, err)
-			return err
-		}
-
 		cache := make(map[string]int)
-		h := Hugo{}
+		langHugo := []Hugo{}
 
 		for _, row := range csvFileContent[1:] {
 
+			// check if key is an markdown file
 			if strings.Split(row[0], ".")[1] == "md" {
-
-				err = mkDirIfNotExists(goldenDir + lang + "/")
+				err = mkDirIfNotExists(contentDir + lang + "/")
 				if err != nil {
 					return err
 				}
 
-				mdFile, err := os.OpenFile(goldenDir+lang+"/"+row[0], os.O_RDWR|os.O_CREATE, 0700)
+				mdFile, err := os.OpenFile(contentDir+lang+"/"+row[0], os.O_RDWR|os.O_CREATE, 0700)
 
 				if err != nil {
 					return err
+				}
+
+				// clean string by removing all tags
+				cleanedData := row[index]
+
+				for tagIndex, tag := range tagsToRemove {
+					cleanedData = strings.ReplaceAll(cleanedData, tag, tagsToReplace[tagIndex])
 				}
 
 				// write to lang file
@@ -377,7 +396,7 @@ func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
 					return errors.New("Cannot truncate file:" + sheet)
 				}
 
-				_, err = mdFile.Write([]byte(row[index]))
+				_, err = mdFile.Write([]byte(cleanedData))
 
 				if err != nil {
 					return errors.New("Cannot write to file:" + sheet)
@@ -386,25 +405,29 @@ func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
 				continue
 			}
 
-			if strings.Contains(row[0], "(") {
-				// Check if row contains hugo multi values
+			h := Hugo{}
 
+			cleanedRow := strings.ReplaceAll(row[index], "NOTRANSLATE_", "")
+			if strings.Contains(row[0], "(") {
+
+				// Check if row contains hugo multi values
 				sp := strings.Split(row[0], "(")
 				tr := strings.TrimRight(sp[1], ")")
 				sp2 := strings.Split(tr, ".")
 
 				// if there is already a hugo object with the same key in cache
 				// so get index from cache and append to to values array
-				if i, ok := cache[sp[0]]; ok {
-					val := []string{sp2[1], row[index]}
+				if i, ok := cache[cleanKey(sp[0])]; ok {
+
+					val := []string{sp2[1], cleanedRow}
 					langHugo[i].Values = append(langHugo[i].Values, val)
 					continue
 				}
 
-				h = Hugo{Key: sp[0], Values: [][]string{{sp2[1], row[index]}}}
+				h = Hugo{Key: cleanKey(sp[0]), Values: [][]string{{sp2[1], cleanedRow}}}
 
 			} else {
-				h = Hugo{Key: row[0], Values: [][]string{{"other", row[index]}}}
+				h = Hugo{Key: cleanKey(row[0]), Values: [][]string{{"other", cleanedRow}}}
 			}
 
 			langHugo = append(langHugo, h)
@@ -412,13 +435,23 @@ func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
 
 		}
 
+		hugoFormat := ""
 		// populate hugo object
 		for _, item := range langHugo {
+
 			hugoFormat += "[" + item.Key + "]\n"
 			for _, val := range item.Values {
 				hugoFormat += val[0] + " = \"" + val[1] + "\"\n"
 			}
 			hugoFormat += "\n"
+		}
+
+		outFilePath := i18nDir + lang + ".toml"
+		file, err := os.OpenFile(outFilePath, os.O_RDWR|os.O_CREATE, 0777)
+
+		if err != nil {
+			log.Println("Error file:"+outFilePath, err)
+			return err
 		}
 
 		// write to lang file
@@ -448,4 +481,8 @@ func mkDirIfNotExists(path string) error {
 		}
 	}
 	return nil
+}
+
+func cleanKey(key string) string {
+	return strings.ReplaceAll(key, ".", "_")
 }
