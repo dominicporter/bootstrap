@@ -1,0 +1,32 @@
+# Typical commands needed
+
+# Make a new key
+# ssh-keygen -t rsa -b 4096 -C "joeblew99_github"
+
+# Add ssh key 
+# ssh-add ~/.ssh/joeblew99_github 
+
+# List added ssh 
+# ssh-add -l 
+
+
+
+
+# Personal GitHub account
+Host github.com
+ HostName github.com
+ User git
+ AddKeysToAgent yes
+ UseKeychain yes
+ IdentityFile ~/.ssh/id_rsa@gmail.com_github.com
+
+
+## winwisely99
+# https://github.com/winwisely99/dev
+# e.g: git clone git@github.com-winwisely99:winwisely99/dev.git
+Host github.com-winwisely99
+ HostName github.com
+ User git
+ UseKeychain yes
+ AddKeysToAgent yes
+ IdentityFile ~/.ssh/winwisely99_github
