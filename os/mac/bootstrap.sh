@@ -27,6 +27,15 @@ brew cask install visual-studio-code
 
 # go
 brew install go
+# THEN in your bash profile put:
+# export GO111MODULE=on
+# export GOROOT=/usr/local/opt/go/libexec
+# export GOPATH=$HOME/workspace/go
+# export PATH=$PATH:$GOROOT/bin
+# export PATH=$PATH:$GOPATH/bin
+
+
+
 
 # protoc
 scoop install protobuf
