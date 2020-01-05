@@ -33,7 +33,6 @@ func processConfig(option string) {
 		return
 	}
 
-	//fmt.Printf("%+v", Setting)
 	log.Println("Starting Extracting Language Files from GoogleSheet - downloading csv approach..")
 	var wg sync.WaitGroup
 	for item, conf := range Setting.GoogleSheet {
@@ -70,7 +69,9 @@ func processConfig(option string) {
 					return
 				}
 			case "hugo":
-				err = services.WriteHugoFiles(csvAbsFilePath, config)
+				cleanTagsDir := "./clean_translation_tags.json"
+				cleanTagsFileName := "clean_translation_tags.json"
+				err = services.WriteHugoFiles(csvAbsFilePath, config, cleanTagsDir, cleanTagsFileName)
 				if err != nil {
 					log.Println(sheet, " : ", err)
 					wg.Done()

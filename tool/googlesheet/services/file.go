@@ -20,12 +20,11 @@ import (
 	"github.com/tidwall/pretty"
 )
 
-var (
-	// tags used when and errors found during translate
-	tagsToRemove = []string{"NOTRANSLATE_", "\"NOTRANSLATE_", "\" NOTRANSLATE_", "] (", "/ ", "„", "“", "«", "»", "”", "”", " /"}
-	// tags to replace and clean files
-	tagsToReplace = []string{"", "", "", "](", "/", "\"", "\"", "\"", "\"", "\"", "\"", "/"}
-)
+// CleanTranslation struct used to clean hugo translations files
+type CleanTranslation struct {
+	Error *string `json:"error"`
+	Fixe  *string `json:"fixe"`
+}
 
 // TomlFormat struct
 type TomlFormat struct {
@@ -336,7 +335,7 @@ func downloadURL(cell string, sheet string) string {
 }
 
 // WriteHugoFiles exported
-func WriteHugoFiles(csvFilePath string, config config.Config) error {
+func WriteHugoFiles(csvFilePath string, config config.Config, cleanTagsDir, cleanTagsFileName string) error {
 
 	// open csv file
 	csvFileContent, err := openCSVFile(csvFilePath)
@@ -352,11 +351,11 @@ func WriteHugoFiles(csvFilePath string, config config.Config) error {
 	}
 
 	if config.Merge == "row" {
-		return mergeRow(csvFileContent, config)
+		return mergeRow(csvFileContent, config, cleanTagsDir, cleanTagsFileName)
 	} else if config.Merge == "column" {
-		return mergeColumns(csvFileContent, config)
+		return mergeColumns(csvFileContent, config, cleanTagsDir, cleanTagsFileName)
 	} else if config.Merge == "cell" {
-		return mergeCell(csvFileContent, config)
+		return mergeCell(csvFileContent, config, cleanTagsDir, cleanTagsFileName)
 	}
 
 	return errors.New("Merge should be column or row")
@@ -369,7 +368,7 @@ func getOutFileName(fileName, colName string) string {
 	return fileName
 }
 
-func mergeCell(csvFileContent [][]string, config config.Config) error {
+func mergeCell(csvFileContent [][]string, config config.Config, cleanTagsDir, cleanTagsFileName string) error {
 
 	for index, col := range csvFileContent[0][1:] {
 		index++
@@ -386,7 +385,7 @@ func mergeCell(csvFileContent [][]string, config config.Config) error {
 				outFile = strings.ReplaceAll(config.FileName, "XXX", col) + config.Extension
 			}
 
-			cleanedData := cleanData(row[index], tagsToRemove, tagsToReplace)
+			cleanedData := cleanData(row[index], cleanTagsDir, cleanTagsFileName)
 			err = writeOutFile(cleanedData, outDir+outFile)
 
 			if err != nil {
@@ -397,7 +396,7 @@ func mergeCell(csvFileContent [][]string, config config.Config) error {
 	return nil
 }
 
-func mergeRow(csvFileContent [][]string, config config.Config) error {
+func mergeRow(csvFileContent [][]string, config config.Config, cleanTagsDir, cleanTagsFileName string) error {
 
 	err := mkDirIfNotExists(config.OutDir)
 	if err != nil {
@@ -423,7 +422,7 @@ func mergeRow(csvFileContent [][]string, config config.Config) error {
 	return nil
 }
 
-func mergeColumns(csvFileContent [][]string, config config.Config) error {
+func mergeColumns(csvFileContent [][]string, config config.Config, cleanTagsDir, cleanTagsFileName string) error {
 
 	for index, col := range csvFileContent[0][1:] {
 		cache := make(map[string]int)
@@ -439,7 +438,7 @@ func mergeColumns(csvFileContent [][]string, config config.Config) error {
 				return err
 			}
 
-			cleanedData = cleanData(row[index], tagsToRemove, tagsToReplace)
+			cleanedData = cleanData(row[index], cleanTagsDir, cleanTagsFileName)
 
 			h := TomlFormat{}
 			if strings.Contains(row[0], "(") {
@@ -494,12 +493,17 @@ func mergeColumns(csvFileContent [][]string, config config.Config) error {
 	return nil
 }
 
-func cleanData(data string, tagsToRemove, tagsToReplace []string) string {
+func cleanData(data string, tagsFileDir, tagsFileName string) string {
 	cleanedData := data
 
-	for tagIndex, tag := range tagsToRemove {
-		cleanedData = strings.ReplaceAll(cleanedData, tag, tagsToReplace[tagIndex])
+	cleanTags, _ := getCleanTranslationTags(tagsFileDir, tagsFileName)
+
+	for _, tag := range cleanTags {
+		cleanedData = strings.ReplaceAll(cleanedData, *tag.Error, *tag.Fixe)
 	}
+	// for tagIndex, tag := range tagsToRemove {
+	// 	cleanedData = strings.ReplaceAll(cleanedData, tag, tagsToReplace[tagIndex])
+	// }
 	return cleanedData
 }
 
@@ -560,4 +564,28 @@ func mkDirIfNotExists(path string) error {
 
 func cleanKey(key string) string {
 	return strings.ReplaceAll(key, ".", "_")
+}
+
+func getCleanTranslationTags(fileDir, fileName string) ([]*CleanTranslation, error) {
+
+	filePath, err := GetAbsoluteFilePath(fileDir, fileName)
+
+	if err != nil {
+		return nil, err
+	}
+
+	f, err := os.Open(filePath)
+
+	if err != nil {
+		return nil, err
+	}
+
+	cleanData := []*CleanTranslation{}
+
+	err = json.NewDecoder(f).Decode(&cleanData)
+	if err != nil {
+		return nil, err
+	}
+
+	return cleanData, nil
 }
