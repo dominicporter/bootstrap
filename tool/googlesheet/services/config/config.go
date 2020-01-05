@@ -57,9 +57,13 @@ type Settings struct {
 
 // Config struct
 type Config struct {
-	ID  string
-	URL string
-	CSV string
+	ID        string
+	URL       string
+	CSV       string
+	Merge     string
+	OutDir    string
+	FileName  string
+	Extension string
 }
 
 // New creates an instance of the application's configuration
@@ -75,15 +79,18 @@ func New(option string) (*Settings, error) {
 		return nil, err
 	}
 
-
-
 	configs := make(map[string]Config)
 	for item := range v.AllSettings() {
 		data := v.GetStringMap(item)
 		configs[item] = Config{
-			ID:  fmt.Sprintf("%v", data["id"]),
-			URL: fmt.Sprintf("%v", data["url"]),
-			CSV: fmt.Sprintf("%v", data["csv"])}
+			ID:        fmt.Sprintf("%v", data["id"]),
+			URL:       fmt.Sprintf("%v", data["url"]),
+			CSV:       fmt.Sprintf("%v", data["csv"]),
+			Merge:     fmt.Sprintf("%v", data["merge"]),
+			OutDir:    fmt.Sprintf("%v", data["out_dir"]),
+			FileName:  fmt.Sprintf("%v", data["file_name"]),
+			Extension: fmt.Sprintf("%v", data["extension"]),
+		}
 
 	}
 	return &Settings{

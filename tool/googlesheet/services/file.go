@@ -15,19 +15,20 @@ import (
 	"time"
 
 	"github.com/pkg/errors"
+	"github.com/winwisely99/bootstrap/tool/googlesheet/services/config"
 
 	"github.com/tidwall/pretty"
 )
 
 var (
-	// tags used when translate
-	tagsToRemove = []string{"NOTRANSLATE_", "\"NOTRANSLATE_", "\" NOTRANSLATE_", "] (", "/ "}
-	// tags to replace
-	tagsToReplace = []string{"", "", "", "](", "/"}
+	// tags used when and errors found during translate
+	tagsToRemove = []string{"NOTRANSLATE_", "\"NOTRANSLATE_", "\" NOTRANSLATE_", "] (", "/ ", "„", "“", "«", "»", "”", "”", " /"}
+	// tags to replace and clean files
+	tagsToReplace = []string{"", "", "", "](", "/", "\"", "\"", "\"", "\"", "\"", "\"", "/"}
 )
 
-// Hugo struct
-type Hugo struct {
+// TomlFormat struct
+type TomlFormat struct {
 	Key    string
 	Values [][]string
 }
@@ -335,140 +336,214 @@ func downloadURL(cell string, sheet string) string {
 }
 
 // WriteHugoFiles exported
-func WriteHugoFiles(csvFilePath, hugoDirPath, sheet string) error {
+func WriteHugoFiles(csvFilePath string, config config.Config) error {
 
 	// open csv file
-	csvFile, err := os.Open(csvFilePath)
+	csvFileContent, err := openCSVFile(csvFilePath)
 
 	if err != nil {
-		log.Println(sheet, " : ", "Cannot open file:"+csvFilePath, err)
-		return errors.Wrap(err, "Cannot open file:"+csvFilePath)
+		return err
+	}
+
+	err = mkDirIfNotExists(config.OutDir)
+
+	if err != nil {
+		return fmt.Errorf("Cannot create dir: %v", err)
+	}
+
+	if config.Merge == "row" {
+		return mergeRow(csvFileContent, config)
+	} else if config.Merge == "column" {
+		return mergeColumns(csvFileContent, config)
+	} else if config.Merge == "cell" {
+		return mergeCell(csvFileContent, config)
+	}
+
+	return errors.New("Merge should be column or row")
+}
+
+func getOutFileName(fileName, colName string) string {
+	if fileName == "" {
+		return colName
+	}
+	return fileName
+}
+
+func mergeCell(csvFileContent [][]string, config config.Config) error {
+
+	for index, col := range csvFileContent[0][1:] {
+		index++
+		for _, row := range csvFileContent[1:] {
+
+			outDir := strings.ReplaceAll(config.OutDir, "XXX", col)
+			err := mkDirIfNotExists(outDir)
+			if err != nil {
+				return err
+			}
+
+			outFile := row[0]
+			if config.FileName != "" {
+				outFile = strings.ReplaceAll(config.FileName, "XXX", col) + config.Extension
+			}
+
+			cleanedData := cleanData(row[index], tagsToRemove, tagsToReplace)
+			err = writeOutFile(cleanedData, outDir+outFile)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func mergeRow(csvFileContent [][]string, config config.Config) error {
+
+	err := mkDirIfNotExists(config.OutDir)
+	if err != nil {
+		return err
+	}
+
+	for _, row := range csvFileContent[1:] {
+		data := ""
+
+		fileName := getOutFileName(config.FileName, row[0])
+
+		for _, col := range row[1:] {
+			data += col + "\n\n"
+
+			err = writeOutFile(data, config.OutDir+fileName+config.Extension)
+
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func mergeColumns(csvFileContent [][]string, config config.Config) error {
+
+	for index, col := range csvFileContent[0][1:] {
+		cache := make(map[string]int)
+		languages := []TomlFormat{}
+		cleanedData := ""
+		fileName := getOutFileName(config.FileName, col)
+		index++
+
+		for _, row := range csvFileContent[1:] {
+
+			err := mkDirIfNotExists(config.OutDir)
+			if err != nil {
+				return err
+			}
+
+			cleanedData = cleanData(row[index], tagsToRemove, tagsToReplace)
+
+			h := TomlFormat{}
+			if strings.Contains(row[0], "(") {
+
+				// Check if row contains multi values
+				sp := strings.Split(row[0], "(")
+				tr := strings.TrimRight(sp[1], ")")
+				sp2 := strings.Split(tr, ".")
+
+				// if there is already a object with the same key in cache
+				// get index from cache and append to to values array
+				if i, ok := cache[cleanKey(sp[0])]; ok {
+
+					val := []string{sp2[1], cleanedData}
+					languages[i].Values = append(languages[i].Values, val)
+					continue
+				}
+
+				h = TomlFormat{Key: cleanKey(sp[0]), Values: [][]string{{sp2[1], cleanedData}}}
+
+			} else {
+				h = TomlFormat{Key: cleanKey(row[0]), Values: [][]string{{"other", cleanedData}}}
+			}
+
+			languages = append(languages, h)
+			cache[h.Key] = len(languages) - 1
+		}
+
+		fileData := ""
+		// populate hugo object
+
+		if config.Extension == ".toml" {
+			for _, item := range languages {
+
+				fileData += "[" + item.Key + "]\n"
+				for _, val := range item.Values {
+					fileData += val[0] + " = \"" + val[1] + "\"\n"
+				}
+				fileData += "\n"
+
+			}
+		} else {
+			return fmt.Errorf("'%s' extension not implemented", config.Extension)
+		}
+
+		err := writeOutFile(fileData, config.OutDir+fileName+config.Extension)
+
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func cleanData(data string, tagsToRemove, tagsToReplace []string) string {
+	cleanedData := data
+
+	for tagIndex, tag := range tagsToRemove {
+		cleanedData = strings.ReplaceAll(cleanedData, tag, tagsToReplace[tagIndex])
+	}
+	return cleanedData
+}
+
+// open csv file
+func openCSVFile(csvFilePath string) ([][]string, error) {
+	// open csv file
+	csvFile, err := os.Open(csvFilePath)
+	defer csvFile.Close()
+
+	if err != nil {
+		return nil, errors.Wrap(err, "Cannot open file:"+csvFilePath)
 	}
 
 	// get csv file content
 	csvFileContent, err := csv.NewReader(csvFile).ReadAll()
 
 	if err != nil {
-		return errors.New("Cannot read file:" + csvFilePath)
+		return nil, errors.New("Cannot read file:" + csvFilePath)
+	}
+	return csvFileContent, nil
+}
+
+func writeOutFile(data, outFilePath string) error {
+
+	file, err := os.OpenFile(outFilePath, os.O_WRONLY|os.O_CREATE, 0777)
+
+	defer file.Close()
+
+	if err != nil {
+		return err
 	}
 
-	// out dirs content and i18n paths
-	i18nDir := hugoDirPath + "i18n/"
-	contentDir := hugoDirPath + "content/"
+	// write to lang file
+	err = file.Truncate(0)
 
-	// create dirs
-	mkDirIfNotExists(i18nDir)
-	mkDirIfNotExists(contentDir)
-
-	// loop through csv file
-	for index, lang := range csvFileContent[0][1:] {
-
-		index++
-		cache := make(map[string]int)
-		langHugo := []Hugo{}
-
-		for _, row := range csvFileContent[1:] {
-
-			// check if key is an markdown file
-			if strings.Split(row[0], ".")[1] == "md" {
-				err = mkDirIfNotExists(contentDir + lang + "/")
-				if err != nil {
-					return err
-				}
-
-				mdFile, err := os.OpenFile(contentDir+lang+"/"+row[0], os.O_RDWR|os.O_CREATE, 0700)
-
-				if err != nil {
-					return err
-				}
-
-				// clean string by removing all tags
-				cleanedData := row[index]
-
-				for tagIndex, tag := range tagsToRemove {
-					cleanedData = strings.ReplaceAll(cleanedData, tag, tagsToReplace[tagIndex])
-				}
-
-				// write to lang file
-				err = mdFile.Truncate(0)
-
-				if err != nil {
-					return errors.New("Cannot truncate file:" + sheet)
-				}
-
-				_, err = mdFile.Write([]byte(cleanedData))
-
-				if err != nil {
-					return errors.New("Cannot write to file:" + sheet)
-				}
-				mdFile.Close()
-				continue
-			}
-
-			h := Hugo{}
-
-			cleanedRow := strings.ReplaceAll(row[index], "NOTRANSLATE_", "")
-			if strings.Contains(row[0], "(") {
-
-				// Check if row contains hugo multi values
-				sp := strings.Split(row[0], "(")
-				tr := strings.TrimRight(sp[1], ")")
-				sp2 := strings.Split(tr, ".")
-
-				// if there is already a hugo object with the same key in cache
-				// so get index from cache and append to to values array
-				if i, ok := cache[cleanKey(sp[0])]; ok {
-
-					val := []string{sp2[1], cleanedRow}
-					langHugo[i].Values = append(langHugo[i].Values, val)
-					continue
-				}
-
-				h = Hugo{Key: cleanKey(sp[0]), Values: [][]string{{sp2[1], cleanedRow}}}
-
-			} else {
-				h = Hugo{Key: cleanKey(row[0]), Values: [][]string{{"other", cleanedRow}}}
-			}
-
-			langHugo = append(langHugo, h)
-			cache[h.Key] = len(langHugo) - 1
-
-		}
-
-		hugoFormat := ""
-		// populate hugo object
-		for _, item := range langHugo {
-
-			hugoFormat += "[" + item.Key + "]\n"
-			for _, val := range item.Values {
-				hugoFormat += val[0] + " = \"" + val[1] + "\"\n"
-			}
-			hugoFormat += "\n"
-		}
-
-		outFilePath := i18nDir + lang + ".toml"
-		file, err := os.OpenFile(outFilePath, os.O_RDWR|os.O_CREATE, 0777)
-
-		if err != nil {
-			log.Println("Error file:"+outFilePath, err)
-			return err
-		}
-
-		// write to lang file
-		err = file.Truncate(0)
-
-		if err != nil {
-			return fmt.Errorf("Cannot truncate file: %v", err)
-		}
-
-		_, err = file.Write([]byte(hugoFormat))
-
-		if err != nil {
-			return fmt.Errorf("Cannot write to file: %v", err)
-		}
-		file.Close()
+	if err != nil {
+		return fmt.Errorf("Cannot truncate file: %v", err)
 	}
 
+	_, err = file.Write([]byte(data))
+
+	if err != nil {
+		return fmt.Errorf("Cannot write to file: %v", err)
+	}
 	return nil
 }
 
