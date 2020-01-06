@@ -46,6 +46,8 @@ scoop install protobuf
 # glfw
 # Do we need it for Windows ?
 # If we do: https://github.com/Deide/deide-bucket/blob/master/bucket/glfw.json
+scoop bucket add deide-bucket
+scoop install glfw
 
 # gcc
 # needed for golang CGO etc.
