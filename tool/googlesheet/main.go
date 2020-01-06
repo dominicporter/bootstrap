@@ -33,12 +33,11 @@ func processConfig(option string) {
 		return
 	}
 
-	//fmt.Printf("%+v", Setting)
 	log.Println("Starting Extracting Language Files from GoogleSheet - downloading csv approach..")
 	var wg sync.WaitGroup
-	for item := range Setting.GoogleSheet {
+	for item, conf := range Setting.GoogleSheet {
 		wg.Add(1)
-		go func(sheet string) {
+		go func(sheet string, config config.Config) {
 			gsheetURL := Setting.GoogleSheet[sheet].CSV
 			csvRelFilePath := "./outputs/" + option + "/" + sheet + ".csv"
 			csvAbsFilePath, err := services.GetAbsoluteFilePath(csvRelFilePath, sheet)
@@ -70,9 +69,9 @@ func processConfig(option string) {
 					return
 				}
 			case "hugo":
-				tomlRelDirPath := "./outputs/" + option + "/"
-
-				err = services.WriteHugoFiles(csvAbsFilePath, tomlRelDirPath, sheet)
+				cleanTagsDir := "./clean_translation_tags.json"
+				cleanTagsFileName := "clean_translation_tags.json"
+				err = services.WriteHugoFiles(csvAbsFilePath, config, cleanTagsDir, cleanTagsFileName)
 				if err != nil {
 					log.Println(sheet, " : ", err)
 					wg.Done()
@@ -83,7 +82,7 @@ func processConfig(option string) {
 			}
 
 			wg.Done()
-		}(item)
+		}(item, conf)
 
 	}
 	wg.Wait()
