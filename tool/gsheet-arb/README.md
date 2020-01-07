@@ -39,6 +39,10 @@ https://github.com/bmw-tech/arb-converter-cli
 
 It will be best to rewrite this in golang actually. Its only 100 lines of code in typescript.
 
+https://github.com/empirefox/protoc-gen-dart-ext/tree/master/pkg/arb
+- this looks like a much better approach
+- also has currency, etc
+
 
 
 
