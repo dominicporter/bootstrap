@@ -1,4 +1,4 @@
-module github.com/winwisely99/bootstrap/example/go/glfw
+module github.com/getcouragenow/bootstrap/example/go/glfw
 
 go 1.13
 

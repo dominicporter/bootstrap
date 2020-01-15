@@ -5,8 +5,8 @@ import (
 	"log"
 	"sync"
 
-	"github.com/winwisely99/bootstrap/tool/googlesheet/services"
-	"github.com/winwisely99/bootstrap/tool/googlesheet/services/config"
+	"github.com/getcouragenow/bootstrap/tool/googlesheet/services"
+	"github.com/getcouragenow/bootstrap/tool/googlesheet/services/config"
 )
 
 func main() {

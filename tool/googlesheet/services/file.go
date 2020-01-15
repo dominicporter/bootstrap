@@ -14,8 +14,8 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/getcouragenow/bootstrap/tool/googlesheet/services/config"
 	"github.com/pkg/errors"
-	"github.com/winwisely99/bootstrap/tool/googlesheet/services/config"
 
 	"github.com/tidwall/pretty"
 )

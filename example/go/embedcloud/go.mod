@@ -1,4 +1,4 @@
-module github.com/winwisely99/bootstrap/example/go/embedcloud
+module github.com/getcouragenow/bootstrap/example/go/embedcloud
 
 go 1.13
 

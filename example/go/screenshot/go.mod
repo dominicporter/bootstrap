@@ -1,4 +1,4 @@
-module github.com/winwisely99/bootstrap/example/go/screenshot
+module github.com/getcouragenow/bootstrap/example/go/screenshot
 
 go 1.13
 

@@ -1,4 +1,4 @@
-module github.com/winwisely99/bootstrap/example/go/hellocloud
+module github.com/getcouragenow/bootstrap/example/go/hellocloud
 
 go 1.13
 
